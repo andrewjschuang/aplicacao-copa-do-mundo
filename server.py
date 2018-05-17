@@ -7,11 +7,10 @@ conn, cursor = init()
 
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/consulta', methods=['POST', 'GET'])
-def consulta(last_selected=None):
+def consulta():
     if request.method == 'POST':
         query = request.form.get('query')
-        # results = select(cursor, query)
-        results = query
+        results = select(cursor, query)
         return render_template('form.html', results=results)
     return render_template('form.html')
 
