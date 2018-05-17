@@ -1,12 +1,16 @@
 import psycopg2
 
-def main():
-    conn = psycopg2.connect('dbname=mydb user=andrewjschuang')
-    cur = conn.cursor()
+def init(dbname='mydb', user='andrewjschuang'):
+    conn = psycopg2.connect(dbname=dbname, user=user)
+    cursor = conn.cursor()
 
-    printResults(select(cur, 'cities'))
+    # result = select(cursor, 'cities')
+    # printResults(result)
 
-    cur.close()
+    return (conn, cursor)
+
+def close(conn, cursor):
+    cursor.close()
     conn.close()
 
 def select(cursor, relation, condition=None):
@@ -20,6 +24,3 @@ def select(cursor, relation, condition=None):
 def printResults(results):
     for item in results:
         print(item)
-
-if __name__ == '__main__':
-    main()
