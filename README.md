@@ -1,2 +1,1 @@
-# MC536 Trabalho 3 Usando Python e Flask
-
+# MC536 Projeto de aplicação de suporte ao público da Copa do Mundo
