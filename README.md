@@ -2,36 +2,36 @@
 
 ## Como criar o banco de dados
 
-### Instalar Postgres  
+**Instalar Postgres**  
 `sudo apt-get install postgresql`
 
-### Logar como usuário postgres  
+**Logar como usuário postgres**  
 `sudo su - postgres`
 
-### Copiar os arquivos para o diretório do postgres
+**Copiar os arquivos para o diretório do postgres**  
 `cp /home/user/projeto/schemas.sql .`  
 `cp /home/user/projeto/fill_database.sql .`
 
-### Criar e acessar banco de dados  
+**Criar e acessar banco de dados**  
 `createdb mydb`  
 `psql mydb`
 
-### Popular esquemas  
+**Popular esquemas**  
 `\i script.sql`
 
-### Popular tuplas  
+**Popular tuplas**  
 `\i fill_database.sql`
 
-##### Aqui dá pra usar os comandos sql  
+**Aqui dá pra usar os comandos sql**  
 `SELECT * FROM pessoa;`
 
-##### Para ver as tabelas  
+**Para ver as tabelas**  
 `\dt `
 
-##### Para ver os esquemas de cada tabela  
+**Para ver os esquemas de cada tabela**  
 `\d pessoa`
 
-### Permitir acesso ao usuário x  
+**Permitir acesso ao usuário x**  
 `GRANT ALL PRIVILEGES ON DATABASE mydb TO x;`  
 `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO x;`  
 `\q`
@@ -39,23 +39,23 @@
 ## Como rodar o servidor
 Faça os passos dentro do diretório do projeto depois de ter criado um banco de dados com os esquemas e tuplas.
 
-### Modificar na linha 6 do server.py  
-```database.init(dbname='nomedobd', user='seuusuario')```
+**Modificar na linha 6 do server.py**  
+`database.init(dbname='nomedobd', user='seuusuario')`
 
-### Instalar virtualenv  
+**Instalar virtualenv**  
 `pip install virtualenv`
 
-### Criar uma virtual environment no diretorio do projeto  
+**Criar uma virtual environment no diretorio do projeto**  
 `python -m virtualenv venv`
 
-### Ativar virtualenv  
+**Ativar virtualenv**  
 `source venv/bin/activate`
 
-### Instalar módulos do python  
+**Instalar módulos do python**  
 `pip install -r requirements.txt`
 
-### Rodar o server  
+**Rodar o server**  
 `python server.py`
 
-### Acessar pela web  
+**Acessar pela web**  
 `http://localhost:5000`
