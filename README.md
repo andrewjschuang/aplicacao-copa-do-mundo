@@ -8,6 +8,10 @@
 ### Logar como usuário postgres  
 `sudo su - postgres`
 
+### Copiar os arquivos para o diretório do postgres
+`cp /home/user/projeto/schemas.sql .`  
+`cp /home/user/projeto/fill_database.sql .`
+
 ### Criar e acessar banco de dados  
 `createdb mydb`  
 `psql mydb`
