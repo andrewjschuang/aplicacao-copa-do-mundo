@@ -3,7 +3,7 @@ import database
 
 app = Flask(__name__)
 
-conn, cursor = database.init(dbname='newdb', user='andrewjschuang')
+conn, cursor = database.init(dbname='mydb', user='andrewjschuang')
 
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/consulta', methods=['POST', 'GET'])

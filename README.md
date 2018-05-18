@@ -34,6 +34,8 @@
 **Permitir acesso ao usuário x**  
 `GRANT ALL PRIVILEGES ON DATABASE mydb TO x;`  
 `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO x;`  
+
+**Para sair**  
 `\q`
 
 ## Como rodar o servidor
