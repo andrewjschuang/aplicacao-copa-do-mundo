@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+         <link rel= "stylesheet"  href= "{{ url_for('static',filename='css/reset.css') }}">
+
+         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+        <title>Consulta ao banco de dados da Copa do Mundo</title>
+    </head>
+    <body>
+        <h1>Selecione a consulta desejada.</h1>
+        <form action="" method="post">
+            <select name='query'>
+                    <option value="pessoa">Todas as pessoas cadastradas</option>
+                <option value="selecao">Todas as selecoes cadastradas</option>
+                <option value="cidade">Todas as cidades cadastradas</option>
+                <option value="evento">Todas os eventos cadastradas</option>
+                <option value="hotel">Todas os hoteis cadastradas</option>
+            </select>
+            <input type="submit" value="Submit">
+        </form>
+        <h1>Resultado:</h1>
+        <h2>{{ results }}</h2>
+    </body>
+</html>

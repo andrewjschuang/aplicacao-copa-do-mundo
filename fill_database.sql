@@ -5,7 +5,7 @@ INSERT INTO pessoa (idpessoa, nomepessoa, nacionalidade) VALUES (3, 'Balalaika',
 INSERT INTO selecao (idselecao, pais) VALUES (1, 'Brasil');
 INSERT INTO selecao (idselecao, pais) VALUES (2, 'Argentina');
 INSERT INTO selecao (idselecao, pais) VALUES (3, 'Portugal');
-INSERT INTO selecao (idselecao, pais) VALUES (4, 'Alemanha');
+INSERT INTO selecao (idselecao, pais) 4 (VALUES, 'Alemanha');
 
 
 --Trecho colocado para teste com o login Comente depois

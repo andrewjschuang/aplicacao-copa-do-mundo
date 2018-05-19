@@ -9,36 +9,36 @@
   <link rel= "stylesheet"  href= "{{ url_for('static',filename='css/reset.css') }}">
 
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
-  <!link rel="stylesheet" href="css/reset.css">
-
-  <!link rel="stylesheet" href="css/style.css" media="screen" type="text/css" />
 
 </head>
 
 <body>
 
   <div class="wrap">
-		<div class="avatar">
+    <div class="avatar">
       <img src="./static/imgs/russia_2018_logo.png">
-		</div>
+    </div>
 
     <form action="" method="post">
-    <input type="text" id="email" name="user_email" placeholder="email" required >
-    <div class="bar">
-	    <i></i>
-    </div>
-    <input type="password" id="password" name="password" placeholder="password" required>
-    
-    <div class="buttons">
-      <button id="regsiter" name="regsiter">REGISTER</button>
-      <button id="login" name="login">LOGIN</button>
-    </div>
-    
+      <input type="text" id="email" name="user_email" placeholder="email" required >
+      <div class="bar">
+       <i></i>
+      </div>
+      <input type="password" id="password" name="password" placeholder="password" required>
+
+      <div class="buttons">
+        <button id="login" name="login">LOGIN</button>
+      </div>
+
     </form>
-	</div>
+    <form action="" method="post">
 
-  <!script src="js/index.js"><!/script>
-
+      <div class="box">IF NOT REGISTERED</div>
+      <div class="buttons">
+       <button  id="register" name="register" >REGISTER</button>
+      </div>
+    </form>
+  </div>
 </body>
 
 </html>

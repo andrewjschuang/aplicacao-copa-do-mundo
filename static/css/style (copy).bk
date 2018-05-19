@@ -67,73 +67,35 @@ body {
 .wrap input[type="password"] {
 	border-radius: 0px 0px 7px 7px ;
 }
+.
+#buttons {
+    margin-top: 18px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#buttons :first-child {
+	 margin-right: 25px;
+    float: right;
+
+}
+
+#buttons :nth-child(2) {
+    margin-right: 25px;
+    float: right;
+}
+
 .buttons button  {
 	width: 100%;
-
-	display: inline-block;
     background: rgba(10, 190, 81, 1);
-    border-radius: 10px;
+    border-radius: 7px;
     text-decoration: center;
     font-size: 13px;	
-    padding: 15px 30px;
+    padding: 15px 34px;
     border: none;
     color: #fff;
     cursor: pointer;
     border-radius: 4px;
     outline: none;
-}
-.box {
-	background: #ffff;
-	border-radius: 7px 7px 7px 7px ;
-	font-family:Lato ;
-  	font-weight:700 ;
-	width: 100%;
-	height: 25px;
-	font-size: 13px;
-	text-align: center;
-	line-height: 25px;
-	margin:auto;
-	vertical-align: auto;
-}
-.result {
-	background: #ffff;
-	border-radius: 7px 7px 0px 0px ;
-	font-family:Lato ;
-  	font-weight:700 ;
-	width: 20%;
-	height: 20%;
-	font-size: 13px;
-	text-align: center;
-	line-height: 25px;
-	margin:auto;
-	vertical-align: auto;
-}
-.result_end {
-	background: #ffff;
-	border-radius: 0px 0px 7px 7px ;
-	font-family:Lato ;
-  	font-weight:700 ;
-	width: 20%;
-	height: 20%;
-	font-size: 13px;
-	text-align: center;
-	line-height: 25px;
-	margin:auto;
-	vertical-align: auto;
-}
-
-
-.result_table {
-	background: #ffff;
-	border-radius: 7px 7px 7px 7px ;
-	font-family:Lato ;
-  	font-weight:700 ;
-	width: 100%;
-	height: 20%;
-	font-size: 13px;
-	text-align: center;
-	line-height: 25px;
-	margin:auto;
-	vertical-align: auto;
 }
 

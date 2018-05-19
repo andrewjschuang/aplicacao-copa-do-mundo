@@ -30,6 +30,31 @@ class Connection(object):
             print(result)
             return result
 
+    def registerSucess(self,name,password,email,nationality,condition=None):
+        if condition:
+            pass
+        else:
+            command = ('SELECT email FROM  torcedor WHERE email=%s' % (email))
+            self.cursor.execute(command)
+            result = self.cursor.fetchall()
+            print(result)
+            if result != []:
+                return False
+
+            command = ('SELECT max(idpessoa) FROM  pessoa' )
+            self.cursor.execute(command)
+            result = self.cursor.fetchall()
+            idpessoa_new = result[0][0] + 1
+            command = ('INSERT INTO pessoa (idpessoa,nomepessoa,nacionalidade) VALUES (%s,%s,%s);' % (idpessoa_new,name,nationality))
+            self.cursor.execute(command)
+            self.conn.commit()
+            
+            command = ('INSERT INTO torcedor (idpessoa,email,senha) VALUES (%s,%s,%s);' % (idpessoa_new,email,password))
+            self.cursor.execute(command)
+            self.conn.commit()
+            return True
+
+
     def select(self, relation, condition=None):
         if condition:
             pass
