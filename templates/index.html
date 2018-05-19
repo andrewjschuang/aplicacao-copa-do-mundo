@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>CUP APP </title>
+  <link rel= "stylesheet"  href= "{{ url_for('static',filename='css/reset.css') }}">
+
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+  <!link rel="stylesheet" href="css/reset.css">
+
+  <!link rel="stylesheet" href="css/style.css" media="screen" type="text/css" />
+
+</head>
+
+<body>
+
+  <div class="wrap">
+		<div class="avatar">
+      <img src="./static/imgs/russia_2018_logo.png">
+		</div>
+
+    <form action="" method="post">
+    <input type="text" id="email" name="user_email" placeholder="email" required >
+    <div class="bar">
+	    <i></i>
+    </div>
+    <input type="password" id="password" name="password" placeholder="password" required>
+    
+    <div class="buttons">
+      <button id="regsiter" name="regsiter">REGISTER</button>
+      <button id="login" name="login">LOGIN</button>
+    </div>
+    
+    </form>
+	</div>
+
+  <!script src="js/index.js"><!/script>
+
+</body>
+
+</html>

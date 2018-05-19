@@ -1,0 +1,9 @@
+A last item I would like to show you is how to insert multiple rows using a dictionary. If you had the following:
+
+namedict = ({"first_name":"Joshua", "last_name":"Drake"},
+            {"first_name":"Steven", "last_name":"Foo"},
+            {"first_name":"David", "last_name":"Bar"})
+You could easily insert all three rows within the dictionary by using:
+
+cur = conn.cursor()
+cur.executemany("""INSERT INTO bar(first_name,last_name) VALUES (%(first_name)s, %(last_name)s)""", namedict)
