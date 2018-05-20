@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request ,redirect , url_for
-from flask_table import Table, Col
 import pandas as pd
 import database
 
