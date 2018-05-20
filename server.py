@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request ,redirect , url_for
 from flask_table import Table, Col
+import pandas as pd
 import database
 
 
@@ -61,9 +62,10 @@ def consulta():
 
 	if request.method == 'POST':
 	    query = request.form.get('query')
-	    results = connection.select(query)
+	    df = connection.select(query)
 
-	    return render_template('form.html', results=results)
+	    
+	    return render_template('form.html',name='RESULTADO',data = df.to_html())
 	return render_template('form.html',)
 
 app.run(debug=True, use_reloader=True)

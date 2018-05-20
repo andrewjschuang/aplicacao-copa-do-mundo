@@ -1,4 +1,6 @@
 import psycopg2
+import pandas as pd
+import pandas.io.sql as psql
 # CLASS TO CONNECT DB 
 class Connection(object):
     def __init__(self,dbname='mydb', user='phillipe'):
@@ -59,9 +61,11 @@ class Connection(object):
         if condition:
             pass
         else:
-            command = ('SELECT * FROM %s' % relation)
-        self.cursor.execute(command)
-        return self.cursor.fetchall()
+            result = psql.read_sql('SELECT * FROM %s' % relation,self.conn)
+           
+            """self.cursor.execute(command)
+            return self.cursor.declare(),self.cursor.fetchall()"""
+            return result
 
     def printResults(self,results):
         for item in results:
