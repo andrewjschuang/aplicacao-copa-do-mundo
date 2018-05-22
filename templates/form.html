@@ -8,20 +8,23 @@
          <title>Consulta ao banco de dados da Copa do Mundo</title>
     </head>
     <body>
+
+          <div class="result">
+            <form action="{{ url_for('configuracao') }}" method="post">
+               <h2>Update user informations:   <input type="submit" value="Configurations"> </h2>
+            </form>
+          </div>
           <div class="result">
               <h2>Selecione a consulta desejada.</h2>
-           
               <form action="" method="post">
                 <select name='query'>
-                    
                         <option value="pessoa">Todas as pessoas cadastradas</option>
                         <option value="selecao">Todas as selecoes cadastradas</option>
                         <option value="cidade">Todas as cidades cadastradas</option>
                         <option value="evento">Todas os eventos cadastradas</option>
                         <option value="hotel">Todas os hoteis cadastradas</option>
-                        <input type="submit" value="Submit">
-                   
                 </select>
+                  <input type="submit" value="Submit">
               </form>
             <h2>{{name}}</h2>
          </div>
