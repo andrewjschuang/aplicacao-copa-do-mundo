@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>CUP APP </title>
+  <link rel= "stylesheet"  href= "{{ url_for('static',filename='css/reset.css') }}">
+
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/shop.css') }}">
+
+</head>
+
+<body>
+   <div class="title"><h1>SHOPPING</h1></div>
+  
+  <div class="wrap">
+
+        <div class="box"><h2>HIRE A TRANSLATOR</h2></div>
+        <form action="{{ url_for('shopping') }}" method="post">
+              <input type="image" src="{{ url_for('static',filename='imgs/translate.jpeg') }}"/>
+        </form>
+        <div class="box"><h2>HIRE A GUIDE</h2></div>
+        <form action="{{ url_for('contrataguia') }}" method="post">
+            <input type="image" src="{{ url_for('static',filename='imgs/guide.jpeg') }}"/>
+        </form>
+        <div class="box"><h2>BUY TICKETS</h2>
+        <form action="{{ url_for('tickets') }}" method="post">
+          <input type="image" src="{{ url_for('static',filename='imgs/Tickets.jpg') }}"/>
+        </form>
+        </div>
+
+  </div>
+
+   
+   
+  </div>
+</body>
+
+</html>

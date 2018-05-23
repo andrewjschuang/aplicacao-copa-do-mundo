@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>CUP APP </title>
+  <link rel= "stylesheet"  href= "{{ url_for('static',filename='css/reset.css') }}">
+
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/shop.css') }}">
+
+</head>
+
+<body>
+   <div class="title"><h1>HIRE A GUIDE</h1></div>
+  
+  <div class="wrap">
+
+        <div class="box"><h1>GUIDES AVAILABLE</h1>
+        <h1>{{guides_querry}}</h1>
+         <div class="GenericTable">
+          {% block content %}
+          {{data | safe}}
+          {% endblock %}
+         </div>
+        <h1>TYPE THE ID OF AN AVAILABLE GUIDE TO HIRE:  <input type="text" name="ID" placeholder="ID" required></h1>
+      </div>
+  </div>
+  </div>
+</body>
+
+</html>

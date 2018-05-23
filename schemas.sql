@@ -35,15 +35,13 @@ CREATE TABLE jogador (
 
 CREATE TABLE guia_voluntario (
   idpessoa int NOT NULL PRIMARY KEY  REFERENCES pessoa (idpessoa),
-  disponibilidade timestamp,
+  disponibilidade boolean,
   nomecidade varchar(30) REFERENCES cidade (nomecidade)
 );
 
-
-
 CREATE TABLE tradutor (
   idpessoa int NOT NULL PRIMARY KEY  REFERENCES pessoa (idpessoa),
-  disponibilidade timestamp,
+  disponibilidade boolean,
   idioma varchar(20),
   valorhora int
 );
@@ -74,18 +72,13 @@ CREATE TABLE hotel (
 CREATE TABLE partida (
   codpartida int NOT NULL PRIMARY KEY ,
   datapartida timestamp,
-  horariopartida time,
+  valoringresso int,
   golselecao1 int,
   golselecao2 int,
   idselecao1 int REFERENCES selecao (idselecao),
   idselecao2 int REFERENCES selecao (idselecao),
   nomecidade varchar(30) REFERENCES cidade (nomecidade)
 );
-
-
-
-
-
 
 CREATE TABLE viagem (
   codviagem int NOT NULL PRIMARY KEY ,
@@ -97,26 +90,21 @@ CREATE TABLE viagem (
 );
 
 
-
-
 CREATE TABLE ajuda (
   idguia int REFERENCES pessoa (idpessoa),
   idtorcedor int REFERENCES pessoa (idpessoa),
-  dataajuda timestamp,
   PRIMARY KEY  (idguia, idtorcedor)
 );
 
 CREATE TABLE contrata (
   idtradutor int NOT NULL REFERENCES pessoa (idpessoa),
   idtorcedor int NOT NULL REFERENCES pessoa (idpessoa),
-  periodo timestamp,
   PRIMARY KEY (idtradutor, idtorcedor)
 );
 
 CREATE TABLE compraingresso (
   idpessoa int REFERENCES pessoa (idpessoa),
   codpartida int REFERENCES partida (codpartida),
-  valoringresso int,
   PRIMARY KEY (idpessoa, codpartida)
 );
 
