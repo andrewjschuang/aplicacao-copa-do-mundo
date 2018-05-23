@@ -2,7 +2,6 @@ from flask import Flask, render_template, request ,redirect , url_for
 import pandas as pd
 import database
 
-
 app = Flask(__name__)
 app.static_folder = "static"
 connection = database.Connection(dbname='mydb', user='phillipe')
@@ -123,14 +122,99 @@ def configuracao():
 @app.route('/shopping', methods=['POST', 'GET'])
 def shopping():
     return render_template('shopping.html')
+
+# Page contratatradutor
+@app.route('/shopping/contratatradutor', methods=['POST', 'GET'])
+def contratatradutor():
+    ## Force user to be logged
+    if connection.id_user == None:
+        #Login Settings
+        if request.method == 'POST' and "login" in request.form :  #this block is only entered when the form is submitted
+            # Reques user email and password for check registers in DB
+            email = putsQuot(request.form.get('user_email'))
+            password = putsQuot(request.form.get('password'))
+            results = connection.login_user(email,password)
+            #IF Regsiter not found return a HTML with ACESS DENIED
+            if(results == []):
+                return '''<h1>ACESS DENIED</h1>
+                        <h1>EMAIL AND/OR PASSWORD INCORRECT</h1>'''
+            # If User Found goes to Settings
+            else:
+                df = connection.translators()
+                if df is None:
+                    return render_template('contratatradutor.html',translators_querry="NOBODY IS AVAILABLE")
+                else:
+                    return render_template('contratatradutor.html',data = df.to_html())
+        return render_template('login_update.html',message="PLEASE INSERT YOUR LOGIN TO MAKE ANY TRANSATION")
+
+    if request.method == 'POST' and 'translator' in request.form:
+        # Verify if the user is logged
+        idtradutor = request.form.get('translator')
+        idtradutor_str = str(idtradutor)
+        if idtradutor!= None and idtradutor_str.isnumeric(): 
+            print(idtradutor)
+            # Buy Tickets with idtradutor logged
+            idtradutor_exist,idtradutor_disponivel = connection.hireTranslator(idtradutor)
+            print(idtradutor_exist,idtradutor_disponivel)
+            if(idtradutor_exist and  idtradutor_disponivel):
+                return render_template('contratatradutor.html',message="TRANSATION SUCCESS")
+            elif(not idtradutor_exist):
+                return render_template('contratatradutor.html',message="idpessoa NOT VALID")
+            else:
+                return render_template('contratatradutor.html',message="TRANSLATOR NOT AVAILABLE")
+    else:
+        df = connection.translators()
+        if df is None:
+            return render_template('contratatradutor.html',translators_querry="NOBODY IS AVAILABLE")
+        else:
+            return render_template('contratatradutor.html',data = df.to_html())
+
 # Page contrataguia
 @app.route('/shopping/contrataguia', methods=['POST', 'GET'])
 def contrataguia():
-    df = connection.available_guide()
-    if df == None:
-        return render_template('contrataguia.html',translators_querry="NOBODY IS AVAILABLE")
+    ## Force user to be logged
+    if connection.id_user == None:
+        #Login Settings
+        if request.method == 'POST' and "login" in request.form :  #this block is only entered when the form is submitted
+            # Reques user email and password for check registers in DB
+            email = putsQuot(request.form.get('user_email'))
+            password = putsQuot(request.form.get('password'))
+            results = connection.login_user(email,password)
+            #IF Regsiter not found return a HTML with ACESS DENIED
+            if(results == []):
+                return '''<h1>ACESS DENIED</h1>
+                        <h1>EMAIL AND/OR PASSWORD INCORRECT</h1>'''
+            # If User Found goes to Settings
+            else:
+                df = connection.guides()
+                if df is None:
+                    return render_template('contrataguia.html',translators_querry="NOBODY IS AVAILABLE")
+                else:
+                    return render_template('contrataguia.html',data = df.to_html())
+        return render_template('login_update.html',message="PLEASE INSERT YOUR LOGIN TO MAKE ANY TRANSATION")
+
+    if request.method == 'POST' and 'find_guide' in request.form:
+        # Verify if the user is logged
+        idguia = request.form.get('find_guide')
+        idguia_str = str(idguia)
+        if idguia!= None and idguia_str.isnumeric(): 
+            print(idguia)
+            # Buy Tickets with idguia logged
+            idguia_exist,idguia_disponivel = connection.contatcGuide(idguia)
+            print(idguia_exist,idguia_disponivel)
+            if(idguia_exist and  idguia_disponivel):
+                return render_template('contrataguia.html',message="TRANSATION SUCCESS")
+            elif(not idguia_exist):
+                return render_template('contrataguia.html',message="idpessoa NOT VALID")
+            else:
+                return render_template('contrataguia.html',message="GUIDE NOT AVAILABLE")
+
     else:
-        return render_template('contrataguia.html',data = df.to_html())
+        df = connection.guides()
+        if df is None:
+            return render_template('contrataguia.html',translators_querry="NOBODY IS AVAILABLE")
+        else:
+            return render_template('contrataguia.html',data = df.to_html())
 # Page tickets
 @app.route('/shopping/tickets', methods=['POST', 'GET'])
 def tickets():
@@ -150,7 +234,7 @@ def tickets():
             else:
                 df = connection.matches()
                 if df is None:
-                    return render_template('tickets.html',translators_querry="NOBODY IS AVAILABLE")
+                    return render_template('tickets.html',translators_querry="NO TICKETS AVAILABLE")
                 else:
                     return render_template('tickets.html',data = df.to_html())
         return render_template('login_update.html',message="PLEASE INSERT YOUR LOGIN TO MAKE ANY TRANSATION")
@@ -160,17 +244,25 @@ def tickets():
     if request.method == 'POST' and 'buy-tickets' in request.form:
         # Verify if the user is logged
         codpartida = request.form.get('buy-tickets')
-        # Buy Tickets with idpessoa logged
-        if(connection.buyTickets()):
-            return '''<h1>SUCCESS TRANSLATION</h1>'''
-
-        
-    df = connection.matches()
-    if df is None:
-        return render_template('tickets.html',matches_querry="<div class=\"box\"><h1>TICKETS ARE NOT AVAILABLE</h1></div>")
+        codpartida_str = str(codpartida)
+        if codpartida!= None and codpartida_str.isnumeric(): 
+            print(codpartida)
+            # Buy Tickets with idpessoa logged
+            codpartida_exist,new_ticket = connection.buyTickets(codpartida)
+            print(codpartida_exist,new_ticket)
+            if(codpartida_exist and  new_ticket):
+                return render_template('tickets.html',message="TRANSATION SUCCESS")
+            elif(not codpartida_exist):
+                return render_template('tickets.html',message="codpartida NOT VALID")
+            else:
+                return render_template('tickets.html',message="TICKET ALREADY BOUGHT")
 
     else:
-        return render_template('tickets.html',data = df.to_html())
+        df = connection.matches()
+        if df is None:
+            return render_template('tickets.html',translators_querry="NO TICKETS AVAILABLE")
+        else:
+            return render_template('tickets.html',data = df.to_html())
 
 
 # Run app

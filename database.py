@@ -112,12 +112,80 @@ class Connection(object):
             self.password_user = password[1:-1] #remove quots
             return True
 
-    def available_guide(condition = None):
+    def translators(self,condition = None):
         if condition:
             pass
         else:
-            result = psql.read_sql('SELECT * FROM guia_voluntario')
-            return result
+             # Query returns the names of  guides
+             query = 'SELECT idpessoa, nomepessoa,disponibilidade,idioma,valorhora \
+                      FROM tradutor NATURAL JOIN pessoa\
+                      WHERE tradutor.idpessoa = pessoa.idpessoa ;' ;
+             result = psql.read_sql(query,self.conn)
+             return result
+
+    def hireTranslator(self,idtranslator,condition=None):
+        if condition:
+            pass
+        else:
+             # VERIFY IF translator EXISTS
+            command = ('SELECT idpessoa FROM tradutor WHERE idpessoa=%s ;' % idtranslator)
+            self.cursor.execute(command)
+            idtranslator_exists = self.cursor.fetchall()
+             # VERIFY IF user has already caontacted a guide
+            command = ('SELECT idtorcedor FROM contrata WHERE idtorcedor=%s ;' % self.id_user)
+            self.cursor.execute(command)
+            already_contacted = self.cursor.fetchall()
+
+            if idtranslator_exists != [] and already_contacted == []:
+                command = ('INSERT INTO  contrata (idtradutor,idtorcedor) VALUES (%s ,%s);' % (idtranslator,self.id_user) )
+                self.cursor.execute(command)
+                command = ('UPDATE tradutor SET disponibilidade=FALSE WHERE idpessoa=%s;' % (idtranslator) )
+                self.cursor.execute(command)
+                self.conn.commit()
+                return True,True #Operation success
+            elif idtranslator_exists == []:
+                return False,True # Failed finding translator
+            elif already_contacted != []:
+                return True,False # Failed, traslator already hired
+            return False,False # Failed, exception
+
+    def contatcGuide(self,idguia,condition = None):
+        if condition:
+            pass
+        else:
+            # VERIFY IF guide EXISTS
+            command = ('SELECT idpessoa FROM guia_voluntario WHERE idpessoa=%s ;' % idguia)
+            self.cursor.execute(command)
+            idguia_exists = self.cursor.fetchall()
+             # VERIFY IF user has already caontacted a guide
+            command = ('SELECT idtorcedor FROM ajuda WHERE idtorcedor=%s ;' % self.id_user)
+            self.cursor.execute(command)
+            already_contacted = self.cursor.fetchall()
+
+            if idguia_exists != [] and already_contacted == []:
+                command = ('INSERT INTO  ajuda (idguia,idtorcedor) VALUES (%s ,%s);' % (idguia,self.id_user) )
+                self.cursor.execute(command)
+                command = ('UPDATE guia_voluntario SET disponibilidade=FALSE WHERE idpessoa=%s;' % (idguia) )
+                self.cursor.execute(command)
+                self.conn.commit()
+                return True,True
+            elif idguia_exists == []:
+                return False,True
+            elif already_contacted != []:
+                return True,False
+            return False,False
+
+    def guides(self,condition =None):
+        if condition:
+            pass
+        else:
+             # Query returns the names of  guides
+             query = 'SELECT idpessoa, nomepessoa,disponibilidade,nomecidade \
+                      FROM guia_voluntario NATURAL JOIN pessoa\
+                      WHERE guia_voluntario.idpessoa = pessoa.idpessoa ;' ;
+             result = psql.read_sql(query,self.conn)
+             return result
+
 
     def matches(self, condition = None):
         if condition:
@@ -134,15 +202,25 @@ class Connection(object):
         if condition:
             pass
         else:
-            # VERIFICA SE O CODPARTIDA EXISTE
-            command = ('SELECT codpartida FROM partida WHERE codpartida=%s ;' % (codpartida))
+            # VERIFY IF codpartida EXISTS
+            command = ('SELECT codpartida FROM partida WHERE codpartida=%s ;' % codpartida)
             self.cursor.execute(command)
-            result = self.cursor.fetchall()
-            # CONTINUANDO IMPLEMENTAÇÂO.......
-            command = ('INSERT INTO  compraingresso (idpessoa,codpartida) VALUES (%s ,%s);' % (self.id_user,codpartida))
+            codpartida_exists = self.cursor.fetchall()
+             # VERIFY IF user has bought already the same ticket
+            command = ('SELECT codpartida FROM compraingresso WHERE codpartida=%s ;' % codpartida)
             self.cursor.execute(command)
-            self.conn.commit()
-            return True
+            already_bought = self.cursor.fetchall()
+
+            if codpartida_exists != [] and already_bought == []:
+                command = ('INSERT INTO  compraingresso (idpessoa,codpartida) VALUES (%s ,%s);' % (self.id_user,codpartida))
+                self.cursor.execute(command)
+                self.conn.commit()
+                return True,True
+            elif codpartida_exists == []:
+                return False,True
+            elif already_bought != []:
+                return True,False
+            return False,False
 
             
     def printResults(self,results):

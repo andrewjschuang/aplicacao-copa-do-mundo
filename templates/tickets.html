@@ -20,13 +20,13 @@
         <div class="box"><h1>FIFA WORLD CUP MATCHES</h1></div>
          <div class="box">
            <form class="buy-tickets" method="post" action="">
-          <input type="text"  placeholder="codpartida" required> 
-          <button type="submit" id="buy-tickets" name='buy-tickets'>BUY</button>
+          <input type="text"name="buy-tickets" placeholder="codpartida" required> 
+          <button type="submit" id='buy'>BUY</button>
             </form>
         </div>
           
   </div>
-     
+     <div class="title"><h1>{{message}}</h1></div>
    <div class="GenericTable">
     {% block content %}
     {{data | safe}}
