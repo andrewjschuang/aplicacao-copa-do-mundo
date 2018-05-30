@@ -1,7 +1,7 @@
 import psycopg2
 import pandas as pd
 import pandas.io.sql as psql
-# CLASS TO CONNECT DB 
+# CLASS TO CONNECT DB
 class Connection(object):
     def __init__(self,dbname='mydb', user='phillipe'):
         try:
@@ -63,7 +63,7 @@ class Connection(object):
             print(result)
             if result != []:
                 return False
-            # If email not registered, choose a new idpessoa for the new user based on the existing idpessoa 
+            # If email not registered, choose a new idpessoa for the new user based on the existing idpessoa
             command = ('SELECT max(idpessoa) FROM  pessoa' )
             self.cursor.execute(command)
             result = self.cursor.fetchall()
@@ -186,18 +186,34 @@ class Connection(object):
              result = psql.read_sql(query,self.conn)
              return result
 
-
-    def matches(self, condition = None):
-        if condition:
-            pass
+    def matches(self, past=False):
+        # Query returns the names of teams that will play in the same match at a data and location
+        if past:
+            attributes = 'codpartida,selecao1,golselecao1,golselecao2,selecao2,datapartida,nomecidade'
         else:
-            # Query returns the names of teams that will play in the same match at a data and location 
-            query = 'SELECT codpartida,selecao1,selecao2,datapartida,nomecidade \
-                    FROM \
-                   ( SELECT datapartida,idselecao2,selecao1,nomecidade,codpartida FROM partida NATURAL JOIN selecao AS sel1(idselecao1,selecao1))\
-                     AS partida_selecao JOIN selecao AS sel2(idselecao2,selecao2) ON partida_selecao.idselecao2=sel2.idselecao2 ;'
-            result = psql.read_sql( query,self.conn)
-            return result
+            attributes = 'codpartida,selecao1,selecao2,datapartida,nomecidade'
+        query = 'SELECT %s \
+                 FROM \
+                ( SELECT * FROM partida NATURAL JOIN selecao AS sel1(idselecao1,selecao1))\
+                  AS partida_selecao JOIN selecao AS sel2(idselecao2,selecao2) ON partida_selecao.idselecao2=sel2.idselecao2 ;' % attributes
+        result = psql.read_sql(query, self.conn)
+        return result
+
+    def incrementGoal(self, golselecao, codpartida):
+        selecao = 'golselecao' + str(golselecao)
+        command = 'UPDATE partida SET %s=%s+1 WHERE codpartida=%s' % (selecao, selecao, codpartida)
+        self.cursor.execute(command)
+        self.conn.commit()
+        result = self.matches(past=True)
+        return result
+
+    def modifyScore(self, gol1, gol2, codpartida):
+        command = 'UPDATE partida SET golselecao1=%s, golselecao2=%s WHERE codpartida=%s' % (gol1, gol2, codpartida)
+        self.cursor.execute(command)
+        self.conn.commit()
+        result = self.matches(past=True)
+        return result
+
     def buyTickets(self, codpartida, condition = None):
         if condition:
             pass
@@ -222,7 +238,6 @@ class Connection(object):
                 return True,False
             return False,False
 
-            
     def printResults(self,results):
         for item in results:
             print(item)

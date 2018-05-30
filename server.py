@@ -4,7 +4,7 @@ import database
 
 app = Flask(__name__)
 app.static_folder = "static"
-connection = database.Connection(dbname='mydb', user='phillipe')
+connection = database.Connection(dbname='mydb', user='andrewjschuang')
 # Insert a " in the begin and end of querry
 def putsQuot(line):
     return "\'"+line+"\'"
@@ -113,7 +113,7 @@ def configuracao():
         if(blank_field<4): # IF USER TYPE IN SOME FIELD
             if(connection.update_settings(name,nationality,email,password)):
                 return redirect(url_for('consulta'))
-      
+
     # If nothing was actioned render the form.
     print(connection.nationality)
     return render_template('configuracao.html',username=connection.name_user,nationality=connection.nationality,email=connection.email_user,password=connection.password_user)
@@ -151,7 +151,7 @@ def contratatradutor():
         # Verify if the user is logged
         idtradutor = request.form.get('translator')
         idtradutor_str = str(idtradutor)
-        if idtradutor!= None and idtradutor_str.isnumeric(): 
+        if idtradutor!= None and idtradutor_str.isnumeric():
             print(idtradutor)
             # Buy Tickets with idtradutor logged
             idtradutor_exist,idtradutor_disponivel = connection.hireTranslator(idtradutor)
@@ -197,7 +197,7 @@ def contrataguia():
         # Verify if the user is logged
         idguia = request.form.get('find_guide')
         idguia_str = str(idguia)
-        if idguia!= None and idguia_str.isnumeric(): 
+        if idguia!= None and idguia_str.isnumeric():
             print(idguia)
             # Buy Tickets with idguia logged
             idguia_exist,idguia_disponivel = connection.contatcGuide(idguia)
@@ -245,7 +245,7 @@ def tickets():
         # Verify if the user is logged
         codpartida = request.form.get('buy-tickets')
         codpartida_str = str(codpartida)
-        if codpartida!= None and codpartida_str.isnumeric(): 
+        if codpartida!= None and codpartida_str.isnumeric():
             print(codpartida)
             # Buy Tickets with idpessoa logged
             codpartida_exist,new_ticket = connection.buyTickets(codpartida)
@@ -264,7 +264,42 @@ def tickets():
         else:
             return render_template('tickets.html',data = df.to_html())
 
+# Page matches
+@app.route('/partidas', methods=['GET','POST'])
+def partidas():
+    # Search all matches
+    df = connection.matches(past=True)
+    df.insert(3, 'Increment goal', '<button onclick="increment1(this)">Increment</button>', allow_duplicates=True)
+    df.insert(5, 'Increment goal', '<button onclick="increment2(this)">Increment</button>', allow_duplicates=True)
+    df.insert(df.shape[-1], 'Modify score', '<button onclick="update_score(this)">Modify</button>')
+    df.sort_values(['codpartida'], inplace=True)
+
+    # Return result Table render in html
+    return render_template('partidas.html', data=df.to_html(index=False,escape=False))
+
+@app.route('/increment', methods=['GET','POST'])
+def increment():
+    golselecao = request.args.get('country')
+    codpartida = int(request.args.get('codpartida'))
+    df = connection.incrementGoal(golselecao, codpartida)
+    return redirect(url_for('partidas'))
+
+@app.route('/modifyscore', methods=['GET', 'POST'])
+def modifyscore():
+    codpartida = request.args.get('codpartida')
+    selecao1 = request.args.get('selecao1')
+    selecao2 = request.args.get('selecao2')
+    goal1 = request.args.get('goal1')
+    goal2 = request.args.get('goal2')
+    return render_template('modificar_placar.html', codpartida=codpartida, selecao1=selecao1, selecao2=selecao2, goal1=goal1, goal2=goal2)
+
+@app.route('/modifyscoreaux', methods=['POST'])
+def modifyscoreaux():
+    codpartida = request.form['codpartida']
+    goal1 = request.form['goal1']
+    goal2 = request.form['goal2']
+    df = connection.modifyScore(goal1, goal2, codpartida)
+    return redirect(url_for('partidas'))
 
 # Run app
 app.run(debug=True, use_reloader=True)
-
