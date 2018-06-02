@@ -19,16 +19,8 @@ CREATE TABLE cidade (
 CREATE TABLE membro_selecao (
   idpessoa int NOT NULL PRIMARY KEY  REFERENCES pessoa (idpessoa),
   numeroparticipacoescopa int,
-  idselecao int REFERENCES selecao (idselecao)
-);
-
-CREATE TABLE comissao_tecnica (
-  idpessoa int NOT NULL PRIMARY KEY  REFERENCES membro_selecao (idpessoa),
-  funcaotecnica varchar(30)
-);
-
-CREATE TABLE jogador (
-  idpessoa int NOT NULL PRIMARY KEY  REFERENCES membro_selecao (idpessoa),
+  idselecao int REFERENCES selecao (idselecao),
+  funcaotecnica varchar(30),
   numerogols int,
   posicao varchar(20)
 );
@@ -38,6 +30,8 @@ CREATE TABLE guia_voluntario (
   disponibilidade boolean,
   nomecidade varchar(30) REFERENCES cidade (nomecidade)
 );
+
+
 
 CREATE TABLE tradutor (
   idpessoa int NOT NULL PRIMARY KEY  REFERENCES pessoa (idpessoa),
@@ -54,10 +48,11 @@ CREATE TABLE torcedor (
 );
 
 CREATE TABLE evento (
-  nomeevento varchar(30) NOT NULL PRIMARY KEY ,
+  codevento int NOT NULL PRIMARY KEY ,
+  nomeevento varchar(40),
   dataevento timestamp,
   idademinima int,
-  descricao varchar(100),
+  descricao varchar(248),
   nomecidade varchar(30) REFERENCES cidade (nomecidade)
 );
 
@@ -80,6 +75,8 @@ CREATE TABLE partida (
   nomecidade varchar(30) REFERENCES cidade (nomecidade)
 );
 
+
+
 CREATE TABLE viagem (
   codviagem int NOT NULL PRIMARY KEY ,
   nomeorigem varchar(30) REFERENCES cidade (nomecidade),
@@ -88,6 +85,8 @@ CREATE TABLE viagem (
   dataviagem timestamp,
   precoviagem int
 );
+
+
 
 
 CREATE TABLE ajuda (
@@ -110,8 +109,8 @@ CREATE TABLE compraingresso (
 
 CREATE TABLE interesse (
   idpessoa int REFERENCES pessoa (idpessoa),
-  nomeevento varchar(30) REFERENCES evento (nomeevento),
+  codevento int REFERENCES evento (codevento),
   valorrating int,
-  numerorating int,
-  PRIMARY KEY (idpessoa, nomeevento)
+  PRIMARY KEY (idpessoa, codevento)
 );
+

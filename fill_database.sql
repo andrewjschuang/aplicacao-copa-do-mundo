@@ -17,3 +17,6 @@ INSERT INTO partida(codpartida, datapartida, valoringresso,golselecao1, golselec
 INSERT INTO partida(codpartida, datapartida, valoringresso,golselecao1, golselecao2, idselecao1, idselecao2, nomecidade ) VALUES (2,to_timestamp(1530406862) ,100,0,0,3,2,'moscow');
 INSERT INTO guia_voluntario(idpessoa,disponibilidade,nomecidade) VALUES (1,TRUE,'moscow');
 INSERT INTO tradutor(idpessoa,disponibilidade,idioma,valorhora) VALUES (1,TRUE,'ENGLISH',12);
+INSERT INTO evento(codevento,nomeevento,dataevento,idademinima,descricao,nomecidade)	VALUES (1,'TESTE',to_timestamp(1530406862),12,NULL,'moscow');
+INSERT INTO evento(codevento,nomeevento,dataevento,idademinima,descricao,nomecidade)	VALUES (2,'TESTE2',to_timestamp(153040622),12,NULL,'moscow');
+INSERT INTO evento(codevento,nomeevento,dataevento,idademinima,descricao,nomecidade)	VALUES (3,'TESTE3',to_timestamp(1530406700),12,NULL,'moscow');

@@ -4,7 +4,7 @@ import database
 
 app = Flask(__name__)
 app.static_folder = "static"
-connection = database.Connection(dbname='mydb', user='andrewjschuang')
+connection = database.Connection(dbname='mydb', user='phillipe')
 # Insert a " in the begin and end of querry
 def putsQuot(line):
     return "\'"+line+"\'"
