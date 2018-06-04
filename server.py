@@ -349,7 +349,7 @@ def modify_score():
     goal1 = request.args.get('goal1')
     goal2 = request.args.get('goal2')
     return render_template('modificar_placar.html', codpartida=codpartida, selecao1=selecao1, selecao2=selecao2, goal1=goal1, goal2=goal2)
-#modify_score()
+# modify_score()
 
 @app.route('/modify_score_aux', methods=['POST'])
 def modify_score_aux():
@@ -358,7 +358,22 @@ def modify_score_aux():
     goal2 = request.form['goal2']
     df = connection.modify_score(goal1, goal2, codpartida)
     return redirect(url_for('partidas'))
-# modify_score_aux()
+# modify_score_aux ()
+
+@app.route('/incrementar_score_jogador', methods=['GET', 'POST'])
+def modify_score():
+    id_jogador = request.args.get('idpessoa')
+    score = request.args.get('n')
+    return render_template('incrementar_score_jogador.html', id_jogador=id_jogador, score=score)
+# incrementar_score_jogador ()
+
+@app.route('/incrementar_score_jogador_aux', methods=['POST'])
+def modify_score_aux():
+    id_jogador = request.form['id_jogador']
+    score = request.form['score']
+    df = connection.incrementar_score_jogador(id_jogador, score)
+    return redirect(url_for('partidas'))
+# incrementar_score_jogador_aux ()
 
 # Run app
 app.run(debug=True, use_reloader=True)

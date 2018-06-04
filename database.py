@@ -365,9 +365,23 @@ class Connection(object):
             print(item)
     # print_results()
 
-    def update_player_score (self, codjogador, n, condition=None):
+    def incrementar_score_jogador (self, id_jogador, score, condition=None):
         '''Incrementa o saldo de gols de um jogador após uma partida'''
 
-    # update_player_score()
+        if condition:
+            pass
+        else:
+            # verify that player exists
+            command =  ('SELECT numerogols FROM membro_selecao WHERE idpessoa=%s;' % id_jogador)
+            self.cursor.execute(command)
+            player_exists = self.cursor.fetchall()
+
+            # player exists: update its score
+            if player_exists:
+                numerogols = player_exists[0][0]
+                command = ('UPDATE membro_selecao SET numerogols=%s WHERE idpessoa=%s' % numerogols + score, id_jogador)
+                return True
+        return False
+    # incrementar_score_jogador()
 
 # Connection
