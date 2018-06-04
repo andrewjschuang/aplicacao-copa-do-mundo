@@ -25,7 +25,7 @@
                <h2>Update user informations:   <input type="submit" value="Configurations"> </h2>
             </form>
           </div>
-          
+
           <div class="result">
               <h2>Selecione a consulta desejada.</h2>
               <form action="" method="post">
@@ -33,13 +33,47 @@
                         <option value="pessoa">Todas as pessoas cadastradas</option>
                         <option value="selecao">Todas as selecoes cadastradas</option>
                         <option value="cidade">Todas as cidades cadastradas</option>
-                        <option value="evento">Todas os eventos cadastradas</option>
-                        <option value="hotel">Todas os hoteis cadastradas</option>
+                        <option value="evento">Todas os eventos cadastrados</option>
+                        <option value="hotel">Todas os hoteis cadastrados</option>
                 </select>
-                  <input type="submit" value="Submit">
+                  <input type="submit" name='whole table'>
+
+                  <br><br>
+                  Cidades que sediam uma partida com jogadores de certa nacionalidade
+                  <input type="submit" name="query_cidades_jogadores">
+
+                  <br><br>
+                  Eventos que acontecem no mesmo dia e na mesma Cidade de uma Partida mas em horários diferentes.
+                  <input type="submit" name="query_eventos">
+
+                  <br><br>
+                  Viagem de uma Cidade para outra em que na primeira joga um Jogador de uma certa nacionalidade e na segunda joga o mesmo Jogador ou um outro.
+                  <br>
+                  Jogador 1: <input type="text" name="jogador1"> Jogador 2: <input type="text" name="jogador2">
+                  <input type="submit" name="query_viagem_jogadores">
+
+                  <br><br>
+                  Hotéis que se localizam  na Cidade onde haverá uma partida da seleção <input type="text" name="selecao">
+                  <input type="submit" name="query_hoteis_selecao">
+
+                  <br><br>
+                 Guias voluntários que estarão disponíveis em uma cidade em que ocorre um determinado Evento em que o Torcedor  <input type="text" name="id_torcedor"> (idtorcedor) se interessa.
+                  <input type="submit" name="query_guias">
+
+                  <br><br>
+                  Comissão técnica da Seleção de um país.
+                  <input type="submit" name="query_comissao">
+
+
+                  <br><br>
+                 Partida em que participa um Jogador da posição <input type="text" name="posicao"> com <input type="number" value="0" name="n_gols"> gols ou mais.
+                  <input type="submit" name="query_jogador_gols">
+
               </form>
-            <h2>{{name}}</h2>
+              <br>
+              <h2>{{name}}</h2>
          </div>
+
 
 
        <div class="GenericTable">

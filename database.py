@@ -86,12 +86,118 @@ class Connection(object):
             return True
 
 
-    def select(self, relation, condition=None):
+    def select(self, query, args=[], condition=None):
         if condition:
             pass
         else:
-            # For a pretty table html, make the querry with pandas api, then send result to server
-            result = psql.read_sql('SELECT * FROM %s' % relation,self.conn)
+            if query=="query_cidades_jogadores":
+                sql = "select distinct nomecidade from partida join membro_selecao on \
+                        idselecao=idselecao or idselecao=idselecao2;"
+                result = psql.read_sql(sql,self.conn)
+
+            elif query=="query_eventos":
+                sql = """select nomeevento, dataevento
+                        from evento,partida
+                        where partida.nomecidade = evento.nomecidade
+                        and dataevento <> datapartida
+                        and to_char(partida.datapartida,'DD') = to_char(evento.dataevento,'DD') ;"""
+                result = psql.read_sql(sql,self.conn)
+
+            elif query == 'query_viagem_jogadores':
+                jogador1, jogador2 = args
+                sql = """select * from viagem where
+                            nomeorigem=(
+                              select nomecidade from partida where
+                              idselecao1 =(
+                                 select idselecao from membro_selecao where
+                                 idpessoa =(
+                                    select idpessoa from pessoa where
+                                    nomepessoa = """ + jogador1 + """
+                                )
+                              )
+                              or idselecao2 =(
+                                select idselecao from membro_selecao where
+                                 idpessoa =(
+                                    select idpessoa from pessoa where
+                                    nomepessoa = """ + jogador1 + """
+                                 )
+                              )
+                            )
+                            and nomedestino =(
+                              select nomecidade from partida where
+                              idselecao1 =(
+                                 select idselecao from membro_selecao where
+                                 idpessoa =(
+                                    select idpessoa from pessoa where
+                                    nomepessoa = """ + jogador2 + """
+                                 )
+                              )
+                              or idselecao2 =(
+                                select idselecao from membro_selecao where
+                                 idpessoa =(
+                                    select idpessoa from pessoa where
+                                    nomepessoa = """ + jogador2 + """
+                                 )
+                              )
+                            );"""
+                result = psql.read_sql(sql,self.conn)
+
+            elif query == 'query_hoteis_selecao':
+                selecao = args[0]
+                sql = """SELECT nomehotel, hotel.nomecidade, valordiaria, disponivel FROM   (
+                     SELECT * FROM (
+                      SELECT nomecidade,idselecao1,idselecao2,selecao1
+                      FROM partida NATURAL JOIN selecao as sel1(idselecao1,selecao1)
+                     )
+                     AS partida_sel1 NATURAL JOIN selecao AS sel2(idselecao2,selecao2)
+                    )
+                    AS selecoes_da_partida JOIN hotel ON hotel.nomecidade = selecoes_da_partida.nomecidade
+                    WHERE selecao1="""+ selecao +"""  OR selecao2= """+ selecao +""" ;"""
+                result = psql.read_sql(sql,self.conn)
+
+            elif query=='query_guias':
+                id_torcedor = args[0]
+                sql = """SELECT * FROM (
+                         SELECT idguia  FROM  (
+                          SELECT codevento,nomecidade,idpessoa FROM
+                           guia_voluntario NATURAL JOIN evento
+                           WHERE guia_voluntario.disponibilidade = true
+                          )
+                          AS guiasDisponiveisNoEvento(codevento,nomecidade,idguia)
+                          NATURAL JOIN interesse WHERE idpessoa=""" + id_torcedor + """
+                        )
+                        AS guiasDisponiveisDeInteresseDoTorcedor(idpessoa) NATURAL JOIN pessoa;"""
+                result = psql.read_sql(sql,self.conn)
+
+            elif query=='query_comissao':
+                sql = """select nomepessoa, numeroparticipacoescopa,funcaotecnica from pessoa
+                        inner join membro_selecao on membro_selecao.idpessoa = pessoa.idpessoa
+                        where funcaotecnica is not NULL"""
+                result = psql.read_sql(sql,self.conn)
+
+            elif query=='query_jogador_gols':
+                posicao, n_gols = args
+                sql = """SELECT * FROM (
+                         SELECT idselecao1,idselecao2 FROM (
+                          SELECT idselecao1,idselecao2
+                          FROM partida NATURAL JOIN selecao AS sel1(idselecao1)
+                         )
+                         AS partida_sel1 NATURAL JOIN selecao AS sel2(idselecao2)
+                        )
+                        AS selecoesDaPartida , (
+                         SELECT funcaotecnica,idselecao,numerogols,posicao FROM membro_selecao
+                         WHERE jogador.funcaotecnica=NULL
+                        )
+                        AS jogador
+                        WHERE selecoesDaPartida.idselecao1 = jogador.idselecao
+                        OR selecoesDaPartida.idselecao2 = jogador.idselecao
+                        AND jogador.numerogols >="""+n_gols+"""
+                        AND jogador.posicao="""+posicao+""";"""
+                result = psql.read_sql(sql,self.conn)
+
+            else:
+                # For a pretty table html, make the querry with pandas api, then send result to server
+                result = psql.read_sql('SELECT * FROM %s' % query,self.conn)
             # OLD Version of querry without pretty tables
             """self.cursor.execute(command)
             return self.cursor.declare(),self.cursor.fetchall()"""

@@ -4,7 +4,7 @@ import database
 
 app = Flask(__name__)
 app.static_folder = "static"
-connection = database.Connection(dbname='mydb', user='phillipe')
+connection = database.Connection(dbname='mydb', user='postgres')
 # Insert a " in the begin and end of querry
 def putsQuot(line):
     return "\'"+line+"\'"
@@ -63,11 +63,49 @@ def registra():
 @app.route('/consulta', methods=['POST', 'GET'])
 def consulta():
     # Make a querry in DB
-    if request.method == 'POST':
+    # if 'query-gols' in request.form:
+    #     df = connection.select('query_cidades_jogadores')
+    #     return render_template('form.html',name='RESULTADO',data = df.to_html())
+    if 'query_viagem_jogadores' in request.form:
+        args = ["\'"+request.form.get('jogador1')+"\'", "\'"+request.form.get('jogador2')+"\'"]
+        df = connection.select('query_viagem_jogadores', args=args)
+        return render_template('form.html', name='RESULTADO', data = df.to_html())
+
+    elif 'query_cidades_jogadores' in request.form:
+        df = connection.select('query_cidades_jogadores')
+        return render_template('form.html',name='RESULTADO',data = df.to_html())
+
+    elif 'query_hoteis_selecao' in request.form:
+        args = ["\'"+request.form.get('selecao')+"\'"]
+        df = connection.select('query_hoteis_selecao', args=args)
+        return render_template('form.html',name='RESULTADO',data = df.to_html())
+
+    elif "query_guias" in request.form:
+        args = ["\'"+request.form.get('id_torcedor')+"\'"]
+        df = connection.select('query_guias', args=args)
+        return render_template('form.html',name='RESULTADO',data = df.to_html())
+
+    elif "query_comissao" in request.form:
+        df = connection.select('query_comissao')
+        return render_template('form.html',name='RESULTADO',data = df.to_html())
+
+    elif "query_jogador_gols" in request.form:
+        args = ["\'"+request.form.get('posicao')+"\'", "\'"+request.form.get('n_gols')+"\'"]
+        df = connection.select('query_jogador_gols', args=args)
+        return render_template('form.html',name='RESULTADO',data = df.to_html())
+
+    elif 'query_eventos' in request.form:
+        df = connection.select('query_eventos')
+        return render_template('form.html',name='RESULTADO',data = df.to_html())
+
+    elif 'whole table' in request.form:
+    # if request.method == 'POST':
+        print('whole table asked!')
         query = request.form.get('query')
         df = connection.select(query)
         # Return result Table render in html
         return render_template('form.html',name='RESULTADO',data = df.to_html())
+
     # If nothing was actioned render the form.html
     return render_template('form.html',)
 

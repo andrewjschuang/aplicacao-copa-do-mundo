@@ -7,7 +7,7 @@
 
 body {
 	background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("russia-background.jpg") ;
-    background-position: auto; 
+    background-position: auto;
 	background-size: 100%;
 	font-family: "Lato" ;
 }
@@ -17,7 +17,7 @@ body {
 	border-radius: 7px 7px 7px 7px ;
 	font-family:Lato ;
   	font-weight:700 ;
-	width: 30%;
+	width: 70%;
 	height: 20%;
 	font-size: 13px;
 	text-align: center;
@@ -29,10 +29,10 @@ body {
 .GenericTable {
 vertical-align: center;
 width:30%;
-	
+
 	height: auto;
 margin: auto;
-	
+
 text-align: center;
 
 font-size:12px;
