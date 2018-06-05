@@ -5,14 +5,17 @@ import database
 app = Flask(__name__)
 app.static_folder = "static"
 connection = database.Connection(dbname='mydb', user='postgres')
+
 # Insert a " in the begin and end of querry
-def putsQuot(line):
+def puts_quote(line):
     return "\'"+line+"\'"
+# puts_quote()
 
 @app.route('/', methods=['POST', 'GET'])
 @app.route("/index.html", methods=['POST','GET'])
-# Login With a email and password
 def login():
+    '''Login with an email and a password'''
+
     connection.id_user = None #Inicialize id_user in login page
     if request.method == 'POST' and "login" in request.form :  #this block is only entered when the form is submitted
         # Reques user email and password for check registers in DB
@@ -25,7 +28,6 @@ def login():
         if(results == []):
             return '''<h1>ACESS DENIED</h1>
                     <h1>EMAIL AND/OR PASSWORD INCORRECT</h1>'''
-
 #return '''<h1>USERNAME: {}</h1>'''.format(results[0][0])
         # IF Register found goes to  page consulta
         return redirect(url_for('consulta'))
@@ -36,9 +38,11 @@ def login():
     else:
         # If nothing was actioned render the index.html
         return render_template('index.html')
-    # Page registra
+# login()
+
 @app.route('/registra',methods=['POST','GET'])
 def registra():
+    '''Page registra'''
     # if all field of forms was filled querry try to insert new user in DB
     if request.method == 'POST' and "submit" in request.form:
         name = request.form.get('name')
@@ -46,12 +50,12 @@ def registra():
         email = request.form.get('email')
         password = request.form.get('password')
 
-        email=putsQuot(email)
-        password= putsQuot(password)
-        nationality = putsQuot(nationality)
-        name = putsQuot(name)
+        email=puts_quote(email)
+        password= puts_quote(password)
+        nationality = puts_quote(nationality)
+        name = puts_quote(name)
         # IF email not in BD register new user , then goes to page login
-        if(connection.registerSucess(name,password,email,nationality)):
+        if(connection.register_success(name,password,email,nationality)):
             return redirect(url_for('login'))
         else:
             # Else print EMAIL ALREADY REGISTERED in the header of the page
@@ -59,9 +63,12 @@ def registra():
 
     # If nothing was actioned render the form-register.html
     return render_template('form-register.html')
-# Page consulta
+# registra()
+
 @app.route('/consulta', methods=['POST', 'GET'])
 def consulta():
+    '''Page consulta'''
+
     # Make a querry in DB
     # if 'query-gols' in request.form:
     #     df = connection.select('query_cidades_jogadores')
@@ -108,16 +115,17 @@ def consulta():
 
     # If nothing was actioned render the form.html
     return render_template('form.html',)
+# consulta()
 
-# Page configuracao
 @app.route('/configuracao', methods=['POST', 'GET'])
 def configuracao():
+    '''Page configuracao'''
     if connection.id_user == None:
         #Login Settings
         if request.method == 'POST' and "login" in request.form :  #this block is only entered when the form is submitted
             # Reques user email and password for check registers in DB
-            email = putsQuot(request.form.get('user_email'))
-            password = putsQuot(request.form.get('password'))
+            email = puts_quote(request.form.get('user_email'))
+            password = puts_quote(request.form.get('password'))
             results = connection.login_user(email,password)
             #IF Regsiter not found return a HTML with ACESS DENIED
             if(results == []):
@@ -131,22 +139,22 @@ def configuracao():
     # Make a update_settings in DB with idpessoa as id_user
     if request.method == 'POST' and 'update' in request.form:
         blank_field = 0
-        name = putsQuot(request.form.get('name'))
+        name = puts_quote(request.form.get('name'))
         if name[1:-1] == "" or name[1:-1].isspace(): # name without quots
             blank_field = blank_field +1
-            name = putsQuot(connection.name_user)
-        nationality = putsQuot(request.form.get('nationality'))
+            name = puts_quote(connection.name_user)
+        nationality = puts_quote(request.form.get('nationality'))
         if nationality[1:-1] == "" or nationality[1:-1].isspace(): # nationality without quots
             blank_field = blank_field +1
-            nationality = putsQuot(connection.nationality)
-        email = putsQuot(request.form.get('email'))
+            nationality = puts_quote(connection.nationality)
+        email = puts_quote(request.form.get('email'))
         if email[1:-1] == "" or email[1:-1].isspace(): # email without quots
             blank_field = blank_field +1
-            email = putsQuot(connection.email_user)
-        password = putsQuot(request.form.get('password'))
+            email = puts_quote(connection.email_user)
+        password = puts_quote(request.form.get('password'))
         if password[1:-1] == "" or password[1:-1].isspace(): # password without quots
             blank_field = blank_field +1
-            password = putsQuot(connection.password_user)
+            password = puts_quote(connection.password_user)
 
         if(blank_field<4): # IF USER TYPE IN SOME FIELD
             if(connection.update_settings(name,nationality,email,password)):
@@ -155,22 +163,25 @@ def configuracao():
     # If nothing was actioned render the form.
     print(connection.nationality)
     return render_template('configuracao.html',username=connection.name_user,nationality=connection.nationality,email=connection.email_user,password=connection.password_user)
+# configuracao()
 
-# Page shopping
 @app.route('/shopping', methods=['POST', 'GET'])
 def shopping():
+    '''Page shopping'''
     return render_template('shopping.html')
+# shopping()
 
-# Page contratatradutor
-@app.route('/shopping/contratatradutor', methods=['POST', 'GET'])
-def contratatradutor():
+@app.route('/shopping/contrata_tradutor', methods=['POST', 'GET'])
+def contrata_tradutor():
+    '''Page contrata_tradutor'''
+
     ## Force user to be logged
     if connection.id_user == None:
         #Login Settings
         if request.method == 'POST' and "login" in request.form :  #this block is only entered when the form is submitted
             # Reques user email and password for check registers in DB
-            email = putsQuot(request.form.get('user_email'))
-            password = putsQuot(request.form.get('password'))
+            email = puts_quote(request.form.get('user_email'))
+            password = puts_quote(request.form.get('password'))
             results = connection.login_user(email,password)
             #IF Regsiter not found return a HTML with ACESS DENIED
             if(results == []):
@@ -180,9 +191,9 @@ def contratatradutor():
             else:
                 df = connection.translators()
                 if df is None:
-                    return render_template('contratatradutor.html',translators_querry="NOBODY IS AVAILABLE")
+                    return render_template('contrata_tradutor.html',translators_querry="NOBODY IS AVAILABLE")
                 else:
-                    return render_template('contratatradutor.html',data = df.to_html())
+                    return render_template('contrata_tradutor.html',data = df.to_html())
         return render_template('login_update.html',message="PLEASE INSERT YOUR LOGIN TO MAKE ANY TRANSATION")
 
     if request.method == 'POST' and 'translator' in request.form:
@@ -192,31 +203,33 @@ def contratatradutor():
         if idtradutor!= None and idtradutor_str.isnumeric():
             print(idtradutor)
             # Buy Tickets with idtradutor logged
-            idtradutor_exist,idtradutor_disponivel = connection.hireTranslator(idtradutor)
+            idtradutor_exist,idtradutor_disponivel = connection.hire_translator(idtradutor)
             print(idtradutor_exist,idtradutor_disponivel)
             if(idtradutor_exist and  idtradutor_disponivel):
-                return render_template('contratatradutor.html',message="TRANSATION SUCCESS")
+                return render_template('contrata_tradutor.html',message="TRANSATION SUCCESS")
             elif(not idtradutor_exist):
-                return render_template('contratatradutor.html',message="idpessoa NOT VALID")
+                return render_template('contrata_tradutor.html',message="idpessoa NOT VALID")
             else:
-                return render_template('contratatradutor.html',message="TRANSLATOR NOT AVAILABLE")
+                return render_template('contrata_tradutor.html',message="TRANSLATOR NOT AVAILABLE")
     else:
         df = connection.translators()
         if df is None:
-            return render_template('contratatradutor.html',translators_querry="NOBODY IS AVAILABLE")
+            return render_template('contrata_tradutor.html',translators_querry="NOBODY IS AVAILABLE")
         else:
-            return render_template('contratatradutor.html',data = df.to_html())
+            return render_template('contrata_tradutor.html',data = df.to_html())
+# contrata_tradutor()
 
-# Page contrataguia
-@app.route('/shopping/contrataguia', methods=['POST', 'GET'])
-def contrataguia():
+@app.route('/shopping/contrata_guia', methods=['POST', 'GET'])
+def contrata_guia():
+    '''Page contrata_guia'''
+
     ## Force user to be logged
     if connection.id_user == None:
         #Login Settings
         if request.method == 'POST' and "login" in request.form :  #this block is only entered when the form is submitted
             # Reques user email and password for check registers in DB
-            email = putsQuot(request.form.get('user_email'))
-            password = putsQuot(request.form.get('password'))
+            email = puts_quote(request.form.get('user_email'))
+            password = puts_quote(request.form.get('password'))
             results = connection.login_user(email,password)
             #IF Regsiter not found return a HTML with ACESS DENIED
             if(results == []):
@@ -226,9 +239,9 @@ def contrataguia():
             else:
                 df = connection.guides()
                 if df is None:
-                    return render_template('contrataguia.html',translators_querry="NOBODY IS AVAILABLE")
+                    return render_template('contrata_guia.html',translators_querry="NOBODY IS AVAILABLE")
                 else:
-                    return render_template('contrataguia.html',data = df.to_html())
+                    return render_template('contrata_guia.html',data = df.to_html())
         return render_template('login_update.html',message="PLEASE INSERT YOUR LOGIN TO MAKE ANY TRANSATION")
 
     if request.method == 'POST' and 'find_guide' in request.form:
@@ -241,28 +254,31 @@ def contrataguia():
             idguia_exist,idguia_disponivel = connection.contatcGuide(idguia)
             print(idguia_exist,idguia_disponivel)
             if(idguia_exist and  idguia_disponivel):
-                return render_template('contrataguia.html',message="TRANSATION SUCCESS")
+                return render_template('contrata_guia.html',message="TRANSATION SUCCESS")
             elif(not idguia_exist):
-                return render_template('contrataguia.html',message="idpessoa NOT VALID")
+                return render_template('contrata_guia.html',message="idpessoa NOT VALID")
             else:
-                return render_template('contrataguia.html',message="GUIDE NOT AVAILABLE")
+                return render_template('contrata_guia.html',message="GUIDE NOT AVAILABLE")
 
     else:
         df = connection.guides()
         if df is None:
-            return render_template('contrataguia.html',translators_querry="NOBODY IS AVAILABLE")
+            return render_template('contrata_guia.html',translators_querry="NOBODY IS AVAILABLE")
         else:
-            return render_template('contrataguia.html',data = df.to_html())
-# Page tickets
+            return render_template('contrata_guia.html',data = df.to_html())
+# contrata_guia()
+
 @app.route('/shopping/tickets', methods=['POST', 'GET'])
 def tickets():
+    '''Page tickets'''
+
     ## Force user to be logged
     if connection.id_user == None:
         #Login Settings
         if request.method == 'POST' and "login" in request.form :  #this block is only entered when the form is submitted
             # Reques user email and password for check registers in DB
-            email = putsQuot(request.form.get('user_email'))
-            password = putsQuot(request.form.get('password'))
+            email = puts_quote(request.form.get('user_email'))
+            password = puts_quote(request.form.get('password'))
             results = connection.login_user(email,password)
             #IF Regsiter not found return a HTML with ACESS DENIED
             if(results == []):
@@ -286,7 +302,7 @@ def tickets():
         if codpartida!= None and codpartida_str.isnumeric():
             print(codpartida)
             # Buy Tickets with idpessoa logged
-            codpartida_exist,new_ticket = connection.buyTickets(codpartida)
+            codpartida_exist,new_ticket = connection.buy_tickets(codpartida)
             print(codpartida_exist,new_ticket)
             if(codpartida_exist and  new_ticket):
                 return render_template('tickets.html',message="TRANSATION SUCCESS")
@@ -301,10 +317,11 @@ def tickets():
             return render_template('tickets.html',translators_querry="NO TICKETS AVAILABLE")
         else:
             return render_template('tickets.html',data = df.to_html())
+# tickets()
 
-# Page matches
 @app.route('/partidas', methods=['GET','POST'])
 def partidas():
+    '''Page partidas'''
     # Search all matches
     df = connection.matches(past=True)
     df.insert(3, 'Increment goal', '<button onclick="increment1(this)">Increment</button>', allow_duplicates=True)
@@ -314,30 +331,49 @@ def partidas():
 
     # Return result Table render in html
     return render_template('partidas.html', data=df.to_html(index=False,escape=False))
+# partidas()
 
 @app.route('/increment', methods=['GET','POST'])
 def increment():
     golselecao = request.args.get('country')
     codpartida = int(request.args.get('codpartida'))
-    df = connection.incrementGoal(golselecao, codpartida)
+    df = connection.increment_goal(golselecao, codpartida)
     return redirect(url_for('partidas'))
+# increment()
 
-@app.route('/modifyscore', methods=['GET', 'POST'])
-def modifyscore():
+@app.route('/modify_score', methods=['GET', 'POST'])
+def modify_score():
     codpartida = request.args.get('codpartida')
     selecao1 = request.args.get('selecao1')
     selecao2 = request.args.get('selecao2')
     goal1 = request.args.get('goal1')
     goal2 = request.args.get('goal2')
     return render_template('modificar_placar.html', codpartida=codpartida, selecao1=selecao1, selecao2=selecao2, goal1=goal1, goal2=goal2)
+# modify_score()
 
-@app.route('/modifyscoreaux', methods=['POST'])
-def modifyscoreaux():
+@app.route('/modify_score_aux', methods=['POST'])
+def modify_score_aux():
     codpartida = request.form['codpartida']
     goal1 = request.form['goal1']
     goal2 = request.form['goal2']
-    df = connection.modifyScore(goal1, goal2, codpartida)
+    df = connection.modify_score(goal1, goal2, codpartida)
     return redirect(url_for('partidas'))
+# modify_score_aux ()
+
+@app.route('/incrementar_score_jogador', methods=['GET', 'POST'])
+def modify_score():
+    id_jogador = request.args.get('idpessoa')
+    score = request.args.get('n')
+    return render_template('incrementar_score_jogador.html', id_jogador=id_jogador, score=score)
+# incrementar_score_jogador ()
+
+@app.route('/incrementar_score_jogador_aux', methods=['POST'])
+def modify_score_aux():
+    id_jogador = request.form['id_jogador']
+    score = request.form['score']
+    df = connection.incrementar_score_jogador(id_jogador, score)
+    return redirect(url_for('partidas'))
+# incrementar_score_jogador_aux ()
 
 # Run app
 app.run(debug=True, use_reloader=True)

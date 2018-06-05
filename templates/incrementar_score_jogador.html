@@ -13,10 +13,9 @@
 </head>
 
 <body>
-    <form class="form-horizontal" action="{{ url_for('modify_score_aux') }}" method="post">
-        {{ selecao1 }}: <input type="number" min="0" value="{{ goal1 }}" name="goal1"><br>
-        {{ selecao2 }}: <input type="number" min="0" value="{{ goal2 }}" name="goal2"><br>
-        <input type="hidden" name="codpartida" value="{{ codpartida }}"/>
+    <form class="form-horizontal" action="{{ url_for('incrementar_score_jogador_aux') }}" method="post">
+        {{ id_jogador }}: <input type="number" min="0" value="{{ score }}" name="goal1"><br>
+        <input type="hidden" name="id_jogador" value="{{ id_jogador }}"/>
         <button type="submit">Submit</button>
     </form>
 </body>

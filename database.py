@@ -3,6 +3,7 @@ import pandas as pd
 import pandas.io.sql as psql
 # CLASS TO CONNECT DB
 class Connection(object):
+
     def __init__(self,dbname='mydb', user='phillipe'):
         try:
             self.conn = psycopg2.connect(dbname=dbname, user=user)
@@ -19,10 +20,12 @@ class Connection(object):
         self.nationality = None
         # result = select(cursor, 'cities')
         # printResults(result)
+    # __init__()
 
     def close(self):
         self.cursor.close()
         self.conn.close()
+    # close()
 
     def login_user(self,email,password,condition=None):
         if condition:
@@ -51,8 +54,10 @@ class Connection(object):
                 self.email_user = None
                 self.password_user = None
             return result
-    # Try to register a new user, if a new email is given
-    def registerSucess(self,name,password,email,nationality,condition=None):
+    # login_user()
+
+    def register_success(self,name,password,email,nationality,condition=None):
+        '''Try to register a new user if a new email is given'''
         if condition:
             pass
         else:
@@ -84,6 +89,7 @@ class Connection(object):
             self.email_user = email[1:-1] #remove quots
             self.password_user = password[1:-1] #remove quots
             return True
+    # register_success()
 
 
     def select(self, query, args=[], condition=None):
@@ -202,6 +208,7 @@ class Connection(object):
             """self.cursor.execute(command)
             return self.cursor.declare(),self.cursor.fetchall()"""
             return result
+    # select()
 
     def update_settings(self,name,nationality,email,password,condition =None):
         if condition:
@@ -217,6 +224,7 @@ class Connection(object):
             self.email_user = email[1:-1] #remove quots
             self.password_user = password[1:-1] #remove quots
             return True
+    # update_settings()
 
     def translators(self,condition = None):
         if condition:
@@ -228,8 +236,9 @@ class Connection(object):
                       WHERE tradutor.idpessoa = pessoa.idpessoa ;' ;
              result = psql.read_sql(query,self.conn)
              return result
+    # translators()
 
-    def hireTranslator(self,idtranslator,condition=None):
+    def hire_translator(self,idtranslator,condition=None):
         if condition:
             pass
         else:
@@ -254,8 +263,9 @@ class Connection(object):
             elif already_contacted != []:
                 return True,False # Failed, traslator already hired
             return False,False # Failed, exception
+    # hire_translator()
 
-    def contatcGuide(self,idguia,condition = None):
+    def contact_guide(self,idguia,condition = None):
         if condition:
             pass
         else:
@@ -280,6 +290,7 @@ class Connection(object):
             elif already_contacted != []:
                 return True,False
             return False,False
+    # contact_guide()
 
     def guides(self,condition =None):
         if condition:
@@ -291,6 +302,7 @@ class Connection(object):
                       WHERE guia_voluntario.idpessoa = pessoa.idpessoa ;' ;
              result = psql.read_sql(query,self.conn)
              return result
+    # guides()
 
     def matches(self, past=False):
         # Query returns the names of teams that will play in the same match at a data and location
@@ -304,23 +316,26 @@ class Connection(object):
                   AS partida_selecao JOIN selecao AS sel2(idselecao2,selecao2) ON partida_selecao.idselecao2=sel2.idselecao2 ;' % attributes
         result = psql.read_sql(query, self.conn)
         return result
+    # matches()
 
-    def incrementGoal(self, golselecao, codpartida):
+    def increment_goal(self, golselecao, codpartida):
         selecao = 'golselecao' + str(golselecao)
         command = 'UPDATE partida SET %s=%s+1 WHERE codpartida=%s' % (selecao, selecao, codpartida)
         self.cursor.execute(command)
         self.conn.commit()
         result = self.matches(past=True)
         return result
+    # increment_goal
 
-    def modifyScore(self, gol1, gol2, codpartida):
+    def modify_score(self, gol1, gol2, codpartida):
         command = 'UPDATE partida SET golselecao1=%s, golselecao2=%s WHERE codpartida=%s' % (gol1, gol2, codpartida)
         self.cursor.execute(command)
         self.conn.commit()
         result = self.matches(past=True)
         return result
+    # modify_score()
 
-    def buyTickets(self, codpartida, condition = None):
+    def buy_tickets(self, codpartida, condition = None):
         if condition:
             pass
         else:
@@ -343,7 +358,30 @@ class Connection(object):
             elif already_bought != []:
                 return True,False
             return False,False
+    # buy_tickets()
 
-    def printResults(self,results):
+    def print_results(self,results):
         for item in results:
             print(item)
+    # print_results()
+
+    def incrementar_score_jogador (self, id_jogador, score, condition=None):
+        '''Incrementa o saldo de gols de um jogador após uma partida'''
+
+        if condition:
+            pass
+        else:
+            # verify that player exists
+            command =  ('SELECT numerogols FROM membro_selecao WHERE idpessoa=%s;' % id_jogador)
+            self.cursor.execute(command)
+            player_exists = self.cursor.fetchall()
+
+            # player exists: update its score
+            if player_exists:
+                numerogols = player_exists[0][0]
+                command = ('UPDATE membro_selecao SET numerogols=%s WHERE idpessoa=%s' % numerogols + score, id_jogador)
+                return True
+        return False
+    # incrementar_score_jogador()
+
+# Connection
