@@ -4,7 +4,7 @@ import database
 
 app = Flask(__name__)
 app.static_folder = "static"
-connection = database.Connection(dbname='mydb', user='postgres')
+connection = database.Connection(dbname='copadb', user='postgres')
 
 # Insert a " in the begin and end of querry
 def puts_quote(line):
@@ -210,7 +210,7 @@ def contrata_tradutor():
             elif(not idtradutor_exist):
                 return render_template('contrata_tradutor.html',message="idpessoa NOT VALID")
             else:
-                return render_template('contrata_tradutor.html',message="TRANSLATOR NOT AVAILABLE")
+                return render_template('contrata_tradutor.html',message="YOU HAVE ALREADY HIRED A TRANSLATOR OR TRANSLATOR IS NOT AVAILABLE")
     else:
         df = connection.translators()
         if df is None:
@@ -251,14 +251,14 @@ def contrata_guia():
         if idguia!= None and idguia_str.isnumeric():
             print(idguia)
             # Buy Tickets with idguia logged
-            idguia_exist,idguia_disponivel = connection.contatcGuide(idguia)
+            idguia_exist,idguia_disponivel = connection.contact_guide(idguia)
             print(idguia_exist,idguia_disponivel)
             if(idguia_exist and  idguia_disponivel):
                 return render_template('contrata_guia.html',message="TRANSATION SUCCESS")
             elif(not idguia_exist):
                 return render_template('contrata_guia.html',message="idpessoa NOT VALID")
             else:
-                return render_template('contrata_guia.html',message="GUIDE NOT AVAILABLE")
+                return render_template('contrata_guia.html',message="GUIDE NOT AVAILABLE OR YOU HAVE ALREADY ASKED FOR A GUIDE")
 
     else:
         df = connection.guides()
@@ -361,14 +361,14 @@ def modify_score_aux():
 # modify_score_aux ()
 
 @app.route('/incrementar_score_jogador', methods=['GET', 'POST'])
-def modify_score():
+def incrementar_score_jogador():
     id_jogador = request.args.get('idpessoa')
     score = request.args.get('n')
     return render_template('incrementar_score_jogador.html', id_jogador=id_jogador, score=score)
 # incrementar_score_jogador ()
 
 @app.route('/incrementar_score_jogador_aux', methods=['POST'])
-def modify_score_aux():
+def incrementar_score_jogador_aux():
     id_jogador = request.form['id_jogador']
     score = request.form['score']
     df = connection.incrementar_score_jogador(id_jogador, score)

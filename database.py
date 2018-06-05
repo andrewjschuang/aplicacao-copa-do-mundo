@@ -246,11 +246,10 @@ class Connection(object):
             command = ('SELECT idpessoa FROM tradutor WHERE idpessoa=%s ;' % idtranslator)
             self.cursor.execute(command)
             idtranslator_exists = self.cursor.fetchall()
-             # VERIFY IF user has already caontacted a guide
-            command = ('SELECT idtorcedor FROM contrata WHERE idtorcedor=%s ;' % self.id_user)
+             # VERIFY IF user has already caontacted a translator
+            command = ('SELECT idtorcedor FROM contrata WHERE idtorcedor=%s or idtradutor=%s ;' % (self.id_user,idtranslator))
             self.cursor.execute(command)
             already_contacted = self.cursor.fetchall()
-
             if idtranslator_exists != [] and already_contacted == []:
                 command = ('INSERT INTO  contrata (idtradutor,idtorcedor) VALUES (%s ,%s);' % (idtranslator,self.id_user) )
                 self.cursor.execute(command)
@@ -274,7 +273,7 @@ class Connection(object):
             self.cursor.execute(command)
             idguia_exists = self.cursor.fetchall()
              # VERIFY IF user has already caontacted a guide
-            command = ('SELECT idtorcedor FROM ajuda WHERE idtorcedor=%s ;' % self.id_user)
+            command = ('SELECT idtorcedor FROM ajuda WHERE idtorcedor=%s or idguia=%s;' % (self.id_user,idguia))
             self.cursor.execute(command)
             already_contacted = self.cursor.fetchall()
 
@@ -344,7 +343,7 @@ class Connection(object):
             self.cursor.execute(command)
             codpartida_exists = self.cursor.fetchall()
              # VERIFY IF user has bought already the same ticket
-            command = ('SELECT codpartida FROM compraingresso WHERE codpartida=%s ;' % codpartida)
+            command = ('SELECT codpartida FROM compraingresso WHERE codpartida=%s and idpessoa=%s;' % (codpartida,self.id_user))
             self.cursor.execute(command)
             already_bought = self.cursor.fetchall()
 
