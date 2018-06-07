@@ -4,7 +4,7 @@ import database
 
 app = Flask(__name__)
 app.static_folder = "static"
-connection = database.Connection(dbname='copadb', user='postgres')
+connection = database.Connection(dbname='copadb', user='andrewjschuang')
 
 # Insert a " in the begin and end of querry
 def puts_quote(line):

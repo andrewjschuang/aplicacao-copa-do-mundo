@@ -13,12 +13,20 @@
 </head>
 
 <body>
-    <form class="form-horizontal" action="{{ url_for('modify_score_aux') }}" method="post">
-        {{ selecao1 }}: <input type="number" min="0" value="{{ goal1 }}" name="goal1"><br>
-        {{ selecao2 }}: <input type="number" min="0" value="{{ goal2 }}" name="goal2"><br>
-        <input type="hidden" name="codpartida" value="{{ codpartida }}"/>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="wrap">
+        <form class="form-horizontal" action="{{ url_for('modify_score_aux') }}" method="post">
+            <div class="box">
+                {{ selecao1 }}:
+            </div>
+            <input type="number" min="0" value="{{ goal1 }}" name="goal1" required><br>
+            <div class="box">
+                {{ selecao2 }}: </div> <input type="number" min="0" value="{{ goal2 }}" name="goal2" required><br>
+            <input type="hidden" name="codpartida" value="{{ codpartida }}"/>
+            <div class="box">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
 </body>
 
 </html>

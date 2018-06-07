@@ -16,7 +16,7 @@ function update_score(btn){
     var goal2 = btn.parentNode.parentNode.cells[4].innerText;
     var selecao1 = btn.parentNode.parentNode.cells[1].innerText;
     var selecao2 = btn.parentNode.parentNode.cells[6].innerText;
-    var url = 'http://localhost:5000/modifyscore?codpartida=' + codpartida + '&goal1=' + goal1 + '&goal2=' + goal2 + '&selecao1=' + selecao1 + '&selecao2=' + selecao2;
+    var url = 'http://localhost:5000/modify_score?codpartida=' + codpartida + '&goal1=' + goal1 + '&goal2=' + goal2 + '&selecao1=' + selecao1 + '&selecao2=' + selecao2;
     window.location.replace(url);
 }
 
