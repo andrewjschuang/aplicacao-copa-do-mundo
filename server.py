@@ -4,7 +4,7 @@ import database
 
 app = Flask(__name__)
 app.static_folder = "static"
-connection = database.Connection(dbname='copadb', user='andrewjschuang')
+connection = database.Connection(dbname='mydb', user='postgres')
 
 # Insert a " in the begin and end of querry
 def puts_quote(line):
@@ -88,12 +88,13 @@ def consulta():
         return render_template('form.html',name='RESULTADO',data = df.to_html())
 
     elif "query_guias" in request.form:
-        args = ["\'"+request.form.get('id_torcedor')+"\'"]
-        df = connection.select('query_guias', args=args)
+        # args = ["\'"+request.form.get('id_torcedor')+"\'"]
+        df = connection.select('query_guias')
         return render_template('form.html',name='RESULTADO',data = df.to_html())
 
     elif "query_comissao" in request.form:
-        df = connection.select('query_comissao')
+        args = ["\'"+request.form.get('pais')+"\'"]
+        df = connection.select('query_comissao', args=args)
         return render_template('form.html',name='RESULTADO',data = df.to_html())
 
     elif "query_jogador_gols" in request.form:

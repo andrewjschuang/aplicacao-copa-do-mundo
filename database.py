@@ -4,7 +4,7 @@ import pandas.io.sql as psql
 # CLASS TO CONNECT DB
 class Connection(object):
 
-    def __init__(self,dbname='mydb', user='phillipe'):
+    def __init__(self,dbname='mydb', user='postgres'):
         try:
             self.conn = psycopg2.connect(dbname=dbname, user=user)
             self.cursor = self.conn.cursor()
@@ -97,8 +97,13 @@ class Connection(object):
             pass
         else:
             if query=="query_cidades_jogadores":
-                sql = "select distinct nomecidade from partida join membro_selecao on \
-                        idselecao=idselecao or idselecao=idselecao2;"
+                # sql = "select distinct nomecidade from partida join membro_selecao on \
+                #         idselecao=idselecao or idselecao=idselecao2;"
+                sql = """
+                        SELECT DISTINCT nomecidade
+                        FROM partida, membro_selecao
+                        WHERE idselecao = idselecao1 OR idselecao = idselecao2;
+                        """
                 result = psql.read_sql(sql,self.conn)
 
             elif query=="query_eventos":
@@ -111,41 +116,45 @@ class Connection(object):
 
             elif query == 'query_viagem_jogadores':
                 jogador1, jogador2 = args
-                sql = """select * from viagem where
-                            nomeorigem=(
-                              select nomecidade from partida where
+                if jogador2 == '':
+                    jogador2 = jogador1
+                sql = """SELECT *  FROM (
+                             SELECT * FROM (
+                              SELECT nomecidade,datapartida FROM partida WHERE
                               idselecao1 =(
-                                 select idselecao from membro_selecao where
+                                 SELECT idselecao FROM membro_selecao WHERE
                                  idpessoa =(
-                                    select idpessoa from pessoa where
-                                    nomepessoa = """ + jogador1 + """
-                                )
-                              )
-                              or idselecao2 =(
-                                select idselecao from membro_selecao where
-                                 idpessoa =(
-                                    select idpessoa from pessoa where
-                                    nomepessoa = """ + jogador1 + """
+                                    SELECT idpessoa FROM pessoa WHERE
+                                    nomepessoa =""" + jogador1 + """
                                  )
                               )
-                            )
-                            and nomedestino =(
-                              select nomecidade from partida where
-                              idselecao1 =(
-                                 select idselecao from membro_selecao where
+                              OR idselecao2 =(
+                                SELECT idselecao FROM membro_selecao WHERE
                                  idpessoa =(
-                                    select idpessoa from pessoa where
+                                    SELECT idpessoa FROM pessoa WHERE
+                                    nomepessoa = """ + jogador1 + """
+                                 )
+                              ) ) AS cidadeJogador1(nomeorigem,datapartida1)  JOIN
+
+                              (SELECT nomecidade,datapartida FROM partida WHERE
+                              idselecao1 =(
+                                 SELECT idselecao FROM membro_selecao WHERE
+                                 idpessoa =(
+                                    SELECT idpessoa FROM pessoa WHERE
                                     nomepessoa = """ + jogador2 + """
                                  )
                               )
-                              or idselecao2 =(
-                                select idselecao from membro_selecao where
+                              OR idselecao2 =(
+                                SELECT idselecao FROM membro_selecao WHERE
                                  idpessoa =(
-                                    select idpessoa from pessoa where
+                                    SELECT idpessoa FROM pessoa WHERE
                                     nomepessoa = """ + jogador2 + """
                                  )
-                              )
-                            );"""
+                              ) ) AS cidadeJogador2(nomedestino,datapartida2)
+                                ON cidadeJogador1.datapartida1 < cidadeJogador2.datapartida2)
+                              AS cidadesProvaveis NATURAL JOIN viagem
+                              WHERE dataviagem BETWEEN datapartida1 AND datapartida2 ;
+                            """
                 result = psql.read_sql(sql,self.conn)
 
             elif query == 'query_hoteis_selecao':
@@ -162,7 +171,9 @@ class Connection(object):
                 result = psql.read_sql(sql,self.conn)
 
             elif query=='query_guias':
-                id_torcedor = args[0]
+                id_torcedor = self.id_user
+                if id_torcedor is None:
+                    id_torcedor=10000000
                 sql = """SELECT * FROM (
                          SELECT idguia  FROM  (
                           SELECT codevento,nomecidade,idpessoa FROM
@@ -170,35 +181,64 @@ class Connection(object):
                            WHERE guia_voluntario.disponibilidade = true
                           )
                           AS guiasDisponiveisNoEvento(codevento,nomecidade,idguia)
-                          NATURAL JOIN interesse WHERE idpessoa=""" + id_torcedor + """
+                          NATURAL JOIN interesse WHERE idpessoa=""" + str(id_torcedor) + """
                         )
                         AS guiasDisponiveisDeInteresseDoTorcedor(idpessoa) NATURAL JOIN pessoa;"""
                 result = psql.read_sql(sql,self.conn)
 
             elif query=='query_comissao':
-                sql = """select nomepessoa, numeroparticipacoescopa,funcaotecnica from pessoa
-                        inner join membro_selecao on membro_selecao.idpessoa = pessoa.idpessoa
-                        where funcaotecnica is not NULL"""
+                pais = args[0]
+                # sql = """select nomepessoa, numeroparticipacoescopa,funcaotecnica from pessoa
+                #         inner join membro_selecao on membro_selecao.idpessoa = pessoa.idpessoa
+                #         where funcaotecnica is not NULL"""
+                sql = """
+                        SELECT nomepessoa,funcaotecnica,numeroparticipacoescopa
+                        FROM
+                            (SELECT idpessoa,funcaotecnica,numeroparticipacoescopa FROM
+                             membro_selecao NATURAL JOIN selecao WHERE funcaotecnica != 'NULL'
+                             AND pais = """ + pais + """ ) AS Comissao NATURAL JOIN pessoa ;
+                    """
                 result = psql.read_sql(sql,self.conn)
 
             elif query=='query_jogador_gols':
                 posicao, n_gols = args
-                sql = """SELECT * FROM (
-                         SELECT idselecao1,idselecao2 FROM (
-                          SELECT idselecao1,idselecao2
-                          FROM partida NATURAL JOIN selecao AS sel1(idselecao1)
-                         )
-                         AS partida_sel1 NATURAL JOIN selecao AS sel2(idselecao2)
-                        )
-                        AS selecoesDaPartida , (
-                         SELECT funcaotecnica,idselecao,numerogols,posicao FROM membro_selecao
-                         WHERE jogador.funcaotecnica=NULL
-                        )
-                        AS jogador
-                        WHERE selecoesDaPartida.idselecao1 = jogador.idselecao
-                        OR selecoesDaPartida.idselecao2 = jogador.idselecao
-                        AND jogador.numerogols >="""+n_gols+"""
-                        AND jogador.posicao="""+posicao+""";"""
+                # sql = """SELECT * FROM (
+                #          SELECT idselecao1,idselecao2 FROM (
+                #           SELECT idselecao1,idselecao2
+                #           FROM partida NATURAL JOIN selecao AS sel1(idselecao1)
+                #          )
+                #          AS partida_sel1 NATURAL JOIN selecao AS sel2(idselecao2)
+                #         )
+                #         AS selecoesDaPartida , (
+                #          SELECT funcaotecnica,idselecao,numerogols,posicao FROM membro_selecao
+                #          WHERE jogador.funcaotecnica=NULL
+                #         )
+                #         AS jogador
+                #         WHERE selecoesDaPartida.idselecao1 = jogador.idselecao
+                #         OR selecoesDaPartida.idselecao2 = jogador.idselecao
+                #         AND jogador.numerogols >="""+n_gols+"""
+                #         AND jogador.posicao="""+posicao+""";"""
+
+                sql = """SELECT  codpartida, valoringresso , pais1, pais2, partida.nomecidade , partida.datapartida
+                 FROM (
+                  SELECT DISTINCT datapartida, nomecidade, pais1, pais2 ,idselecao1 ,
+                                  idselecao2
+                   FROM (
+                     SELECT idselecao1 , idselecao2 ,datapartida ,nomecidade,pais1,pais2
+                     FROM ( SELECT *
+                      FROM partida NATURAL JOIN selecao AS sel1(idselecao1,pais1)
+                     )
+                      AS partida_sel1 NATURAL JOIN selecao AS sel2(idselecao2,pais2)
+                    ) AS todasPartidascomGolsEposicao
+                      JOIN ( SELECT idselecao,numerogols,posicao FROM membro_selecao
+                             WHERE funcaotecnica = 'NULL' AND numerogols >= """ + n_gols + """ AND
+                             posicao=""" + posicao + """
+                             ) AS jogador ON (todasPartidascomGolsEposicao.idselecao1 = jogador.idselecao    OR
+                                  todasPartidascomGolsEposicao.idselecao2 = jogador.idselecao)
+                             )  AS selecoesDaPartida JOIN partida ON
+                                 (selecoesDaPartida.idselecao1 = partida.idselecao1 AND
+                                  partida.idselecao2 = selecoesDaPartida.idselecao2) ;"""
+
                 result = psql.read_sql(sql,self.conn)
 
             else:
