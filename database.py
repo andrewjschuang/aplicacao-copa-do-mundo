@@ -91,25 +91,49 @@ class Connection(object):
             return True
     # register_success()
 
+    def select_nacionalidade(self):
+        sql = "SELECT DISTINCT nacionalidade FROM pessoa"
+        result = psql.read_sql(sql,self.conn)
+        return result
+
+    def select_partidas(self):
+        sql = """
+                SELECT DISTINCT codpartida, selecao1, selecao2, nomecidade, datapartida
+                FROM   (
+                 SELECT * FROM (
+                  SELECT codpartida,nomecidade,idselecao1,idselecao2,selecao1, datapartida
+                  FROM partida NATURAL JOIN selecao as sel1(idselecao1,selecao1)
+                 )
+                 AS partida_sel1 NATURAL JOIN selecao AS sel2(idselecao2,selecao2)
+                ) AS partidas;
+            """
+        result = psql.read_sql(sql,self.conn)
+        return result
+
 
     def select(self, query, args=[], condition=None):
         if condition:
             pass
         else:
             if query=="query_cidades_jogadores":
+                nacionalidade = args[0]
                 # sql = "select distinct nomecidade from partida join membro_selecao on \
                 #         idselecao=idselecao or idselecao=idselecao2;"
                 sql = """
                         SELECT DISTINCT nomecidade
-                        FROM partida, membro_selecao
-                        WHERE idselecao = idselecao1 OR idselecao = idselecao2;
+                        FROM partida, membro_selecao, pessoa
+                        WHERE (idselecao = idselecao1 OR idselecao = idselecao2)
+                        AND membro_selecao.idpessoa = pessoa.idpessoa
+                        AND pessoa.nacionalidade ="""+ nacionalidade + """ ;
                         """
                 result = psql.read_sql(sql,self.conn)
 
             elif query=="query_eventos":
+                codpartida = args[0]
                 sql = """select nomeevento, dataevento
                         from evento,partida
-                        where partida.nomecidade = evento.nomecidade
+                        where partida.codpartida="""+ codpartida +"""
+                        and partida.nomecidade = evento.nomecidade
                         and dataevento <> datapartida
                         and to_char(partida.datapartida,'DD') = to_char(evento.dataevento,'DD') ;"""
                 result = psql.read_sql(sql,self.conn)

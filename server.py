@@ -68,6 +68,11 @@ def registra():
 @app.route('/consulta', methods=['POST', 'GET'])
 def consulta():
     '''Page consulta'''
+    # nacionalidades = list(connection.select_nacionalidade()['nacionalidade'])
+    nacionalidades = connection.select_nacionalidade()['nacionalidade']
+
+    partidas = connection.select_partidas()
+    partidas = partidas.to_string(header=False, index=False, index_names=False).split('\n')
 
     # Make a querry in DB
     # if 'query-gols' in request.form:
@@ -76,35 +81,39 @@ def consulta():
     if 'query_viagem_jogadores' in request.form:
         args = ["\'"+request.form.get('jogador1')+"\'", "\'"+request.form.get('jogador2')+"\'"]
         df = connection.select('query_viagem_jogadores', args=args)
-        return render_template('form.html', name='RESULTADO', data = df.to_html())
+        return render_template('form.html', name='RESULTADO', data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     elif 'query_cidades_jogadores' in request.form:
-        df = connection.select('query_cidades_jogadores')
-        return render_template('form.html',name='RESULTADO',data = df.to_html())
+        nacionalidade_escolhida = request.form.get('nacionalidade')
+        args = ['\''+nacionalidade_escolhida+'\'']
+        df = connection.select('query_cidades_jogadores', args)
+        return render_template('form.html',name='RESULTADO',data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     elif 'query_hoteis_selecao' in request.form:
         args = ["\'"+request.form.get('selecao')+"\'"]
         df = connection.select('query_hoteis_selecao', args=args)
-        return render_template('form.html',name='RESULTADO',data = df.to_html())
+        return render_template('form.html',name='RESULTADO',data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     elif "query_guias" in request.form:
         # args = ["\'"+request.form.get('id_torcedor')+"\'"]
         df = connection.select('query_guias')
-        return render_template('form.html',name='RESULTADO',data = df.to_html())
+        return render_template('form.html',name='RESULTADO',data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     elif "query_comissao" in request.form:
         args = ["\'"+request.form.get('pais')+"\'"]
         df = connection.select('query_comissao', args=args)
-        return render_template('form.html',name='RESULTADO',data = df.to_html())
+        return render_template('form.html',name='RESULTADO',data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     elif "query_jogador_gols" in request.form:
         args = ["\'"+request.form.get('posicao')+"\'", "\'"+request.form.get('n_gols')+"\'"]
         df = connection.select('query_jogador_gols', args=args)
-        return render_template('form.html',name='RESULTADO',data = df.to_html())
+        return render_template('form.html',name='RESULTADO',data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     elif 'query_eventos' in request.form:
-        df = connection.select('query_eventos')
-        return render_template('form.html',name='RESULTADO',data = df.to_html())
+        partida_escolhida = request.form.get('partida')
+        args = ['\''+partida_escolhida+'\'']
+        df = connection.select('query_eventos', args=args)
+        return render_template('form.html',name='RESULTADO',data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     elif 'whole table' in request.form:
     # if request.method == 'POST':
@@ -112,10 +121,10 @@ def consulta():
         query = request.form.get('query')
         df = connection.select(query)
         # Return result Table render in html
-        return render_template('form.html',name='RESULTADO',data = df.to_html())
+        return render_template('form.html',name='RESULTADO',data = df.to_html(), nacionalidades=nacionalidades, partidas=partidas)
 
     # If nothing was actioned render the form.html
-    return render_template('form.html',)
+    return render_template('form.html', nacionalidades=nacionalidades, partidas=partidas)
 # consulta()
 
 @app.route('/configuracao', methods=['POST', 'GET'])

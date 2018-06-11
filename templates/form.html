@@ -29,45 +29,47 @@
           <div class="result">
               <h2>Selecione a consulta desejada.</h2>
               <form action="" method="post">
-                <!-- <select name='query'>
-                        <option value="pessoa">Todas as pessoas cadastradas</option>
-                        <option value="selecao">Todas as selecoes cadastradas</option>
-                        <option value="cidade">Todas as cidades cadastradas</option>
-                        <option value="evento">Todas os eventos cadastrados</option>
-                        <option value="hotel">Todas os hoteis cadastrados</option>
-                </select>
-                  <input type="submit" name='whole table'>
-
-                  <br><br> -->
                   Cidades que sediam uma partida com jogadores de certa nacionalidade
+                  <br>
+                    <select name='nacionalidade'>
+                        {% for nacionalidade in nacionalidades %}
+                            <option value="{{nacionalidade}}">{{nacionalidade}}</option>
+                        {% endfor %}
+                    </select>
                   <input type="submit" name="query_cidades_jogadores">
 
                   <br><br>
-                  Eventos que acontecem no mesmo dia e na mesma Cidade de uma Partida mas em horários diferentes.
+                  Eventos que acontecem no mesmo dia e na mesma cidade de uma partida mas em horários diferentes.
+                  <br>
+                    <select name='partida'>
+                        {% for partida in partidas %}
+                            <option value="{{partida.split(' ')[0]}}">{{partida}}</option>
+                        {% endfor %}
+                    </select>
                   <input type="submit" name="query_eventos">
 
                   <br><br>
-                  Viagem de uma Cidade para outra em que na primeira joga um Jogador de uma certa nacionalidade e na segunda joga o mesmo Jogador ou um outro.
+                  Viagem de uma cidade para outra em que na primeira joga um jogador de uma certa nacionalidade e na segunda joga o mesmo jogador ou um outro.
                   <br>
                   Jogador 1: <input type="text" name="jogador1"> Jogador 2: <input type="text" name="jogador2">
                   <input type="submit" name="query_viagem_jogadores">
 
                   <br><br>
-                  Hotéis que se localizam  na Cidade onde haverá uma partida da seleção <input type="text" name="selecao">
+                  Hotéis que se localizam  na cidade onde haverá uma partida da seleção <input type="text" name="selecao">
                   <input type="submit" name="query_hoteis_selecao">
 
                   <br><br>
-                 Guias voluntários que estarão disponíveis em uma cidade em que ocorre um determinado Evento em que o torcedor se interessa.
+                 Guias voluntários que estarão disponíveis em uma cidade em que ocorre um determinado evento em que o torcedor se interessa.
                  <!-- <input type="text" name="id_torcedor"> (idtorcedor) -->
                   <input type="submit" name="query_guias">
 
                   <br><br>
-                  Comissão técnica da Seleção do país: <input type="text" name="pais">
+                  Comissão técnica da seleção do país: <input type="text" name="pais">
                   <input type="submit" name="query_comissao">
 
 
                   <br><br>
-                 Partida em que participa um Jogador da posição <input type="text" name="posicao"> com <input type="number" value="0" name="n_gols"> gols ou mais.
+                 Partida em que participa um jogador da posição <input type="text" name="posicao"> com <input type="number" value="0" name="n_gols"> gols ou mais.
                   <input type="submit" name="query_jogador_gols">
 
               </form>
