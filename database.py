@@ -92,7 +92,8 @@ class Connection(object):
     # register_success()
 
     def select_nacionalidade(self):
-        sql = "SELECT DISTINCT nacionalidade FROM pessoa"
+        #sql = "SELECT DISTINCT nacionalidade FROM pessoa"
+        sql = "SELECT DISTINCT pais FROM membro_selecao NATURAL JOIN selecao;"
         result = psql.read_sql(sql,self.conn)
         return result
 
@@ -140,7 +141,7 @@ class Connection(object):
 
             elif query == 'query_viagem_jogadores':
                 jogador1, jogador2 = args
-                if jogador2 == '':
+                if jogador2 == "''":
                     jogador2 = jogador1
                 sql = """SELECT *  FROM (
                              SELECT * FROM (

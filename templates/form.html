@@ -43,7 +43,7 @@
                   <br>
                     <select name='partida'>
                         {% for partida in partidas %}
-                            <option value="{{partida.split(' ')[0]}}">{{partida}}</option>
+                            <option value="{{partida.strip().split(' ')[0]}}">{{partida}}</option>
                         {% endfor %}
                     </select>
                   <input type="submit" name="query_eventos">

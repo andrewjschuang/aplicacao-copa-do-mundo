@@ -4,7 +4,7 @@ import database
 
 app = Flask(__name__)
 app.static_folder = "static"
-connection = database.Connection(dbname='mydb', user='postgres')
+connection = database.Connection(dbname='copadb', user='phillipe')
 
 # Insert a " in the begin and end of querry
 def puts_quote(line):
@@ -69,8 +69,9 @@ def registra():
 def consulta():
     '''Page consulta'''
     # nacionalidades = list(connection.select_nacionalidade()['nacionalidade'])
-    nacionalidades = connection.select_nacionalidade()['nacionalidade']
-
+    #nacionalidades = connection.select_nacionalidade()['nacionalidade']
+    nacionalidades = connection.select_nacionalidade()['pais']
+    
     partidas = connection.select_partidas()
     partidas = partidas.to_string(header=False, index=False, index_names=False).split('\n')
 
